@@ -1,24 +1,15 @@
 spring:
   config:
     import:
-        - swagger-messages.yaml
+      - swagger-messages.yaml
   profiles:
-    active: prod
+    active: dev
   servlet:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
   application:
     name: ListIn
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: false
-    properties:
-      hibernate:
-        format_sql: true
-    database: postgresql
-    open-in-view: off
   security:
     oauth2:
       client:

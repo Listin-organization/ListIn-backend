@@ -444,6 +444,20 @@ INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value
 
 
 
+--Women shoes types
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('9ab7ad2e-70a4-4637-ac3e-caff016906ff', null, '3ee72759-ee99-4329-b5be-cd1c44b5af40','Ballet Flats','Balet poyabzali','Балетки');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('a8611a06-d57f-4473-ab68-56d531b4f390', null, '3ee72759-ee99-4329-b5be-cd1c44b5af40','Pumps','Labli tufli','Туфли-лодочки');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('d9bc2091-3523-4e68-b062-febe327b9605', null, '3ee72759-ee99-4329-b5be-cd1c44b5af40','Stilettos','Stiletto','Шпильки');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('27164ed5-d3ad-44b9-b3b1-bab4abdd9ed7', null, '3ee72759-ee99-4329-b5be-cd1c44b5af40','Kitten Heels','Past poshnali tufli','Невысокие каблуки');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('ba38e82e-56b2-4400-9157-879f8211e25f', null, '3ee72759-ee99-4329-b5be-cd1c44b5af40','Wedges','Poshnali tufli','Туфли на танкетке');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('6626aaea-96ca-4286-83a6-94e10a2abbe8', null, '3ee72759-ee99-4329-b5be-cd1c44b5af40','Block Heels','To‘g‘ri poshnali tufli','Каблуки-колодки');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('29c58b94-a02d-4a0b-bd4d-32ac7244d5c2', null, '3ee72759-ee99-4329-b5be-cd1c44b5af40','Mules','Mule tufli','Мюли');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('6f66d9f0-19d6-419b-b4ff-c97dcac9eee2', null, '3ee72759-ee99-4329-b5be-cd1c44b5af40','Loafers','Loferlar','Лоферы');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('cf2f4930-1831-49ef-9c2c-5ae86d358dbf', null, '3ee72759-ee99-4329-b5be-cd1c44b5af40','Sandals','Sandalilar','Сандалии');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('fef5ea52-6d23-49fd-a002-d883b18ca05b', null, '3ee72759-ee99-4329-b5be-cd1c44b5af40','Gladiator Sandals','Gladiator sandalilar','Сандалии-гладиаторы');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('755a96ed-f8ae-45a8-8f9e-d80033e7f93d', null, '3ee72759-ee99-4329-b5be-cd1c44b5af40','Espadrilles','Espadrillar','Эспадрильи');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('2260aba1-1360-49d0-a534-5be4985ecd0e', null, '3ee72759-ee99-4329-b5be-cd1c44b5af40','Sneakers','Krossovkalar','Кроссовки');
+
 --Women shoes Brand value attributes
 INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('5a71404f-54cc-4382-adb4-d4d0c769b7c1', null, 'f8b9f9fa-5f48-4c17-a916-49e08ee0ee52','Nike', 'Nike', 'Nike');
 INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('0eba46c5-b3b7-48d8-9343-363cfab38eaa', null, 'f8b9f9fa-5f48-4c17-a916-49e08ee0ee52','Adidas', 'Adidas', 'Adidas');
@@ -546,6 +560,17 @@ INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value
 
 
 
+--Men shoes types
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('6dcbc03e-ac04-4682-92f9-3dc7f178c4f5', null, '1b8ee804-c806-4dc4-9c37-5a85bef01574','Oxfords','Oksford tuflilari','Оксфорды');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('8b3b6b31-57dd-417d-9b14-3691edf7dc6d', null, '1b8ee804-c806-4dc4-9c37-5a85bef01574','Derbies','Derbi tuflilari','Дерби');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('d7fbc518-2dd7-49a6-a839-2e0ed9a33b6c', null, '1b8ee804-c806-4dc4-9c37-5a85bef01574','Brogues','Brog tuflilari','Броги');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('9f129a03-0974-4a71-bf55-9fc449b6373d', null, '1b8ee804-c806-4dc4-9c37-5a85bef01574','Loafers','Loferlar','Лоферы');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('ebb9e373-502e-41c6-9741-b4bbbd6c4439', null, '1b8ee804-c806-4dc4-9c37-5a85bef01574','Monk Straps','Monk tuflilari','Монки');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('1fa67e9d-d47c-462a-a3e5-21b61a9650c4', null, '1b8ee804-c806-4dc4-9c37-5a85bef01574','Dress Boots','Kostyum etiklari','Классические ботинки');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('74f16ba2-8b40-4c9f-89a2-b30ace93714f', null, '1b8ee804-c806-4dc4-9c37-5a85bef01574','Sneakers','Krossovkalar','Кроссовки');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('6ea9d275-982b-497e-8c0b-57f16ac4d276', null, '1b8ee804-c806-4dc4-9c37-5a85bef01574','Slip-Ons','Slip-on tuflilar','Слипоны');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('b3babab2-56fb-473c-b6a3-bc02b266103e', null, '1b8ee804-c806-4dc4-9c37-5a85bef01574','Espadrilles','Espadrillar','Эспадрильи');
+INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('bd725dff-44e6-4401-b4a7-7c4370697c45', null, '1b8ee804-c806-4dc4-9c37-5a85bef01574','Sandals','Sandalilar','Сандалии');
 
 --Men shoes brand value attributes
 INSERT INTO attribute_values (attribute_value_id, parent_id, attribute_id, value, value_uz, value_ru ) VALUES ('81027aae-c2bd-4910-ae6a-5405cf84fe9f', null, '548bed87-d533-4cf5-b316-9f86d6dcc062','Nike', 'Nike', 'Nike');

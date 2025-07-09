@@ -23,6 +23,16 @@ spring:
   elasticsearch:
     uris: ${ELASTIC_SEARCH_URI}
 
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    open-in-view: off
+
 elasticsearch:
   index-name: ${ELASTIC_SEARCH_INDEX_NAME}
   input-index-name: ${ELASTIC_SEARCH_INPUT_INDEX_NAME}
