@@ -3,7 +3,7 @@ spring:
     import:
       - swagger-messages.yaml
   profiles:
-    active: dev
+    active: prod
   servlet:
     multipart:
       max-file-size: 100MB
@@ -47,3 +47,6 @@ application:
       expiration: 31536000000 # 365 days | 86400000 # 1 day  | 60000 1 minute (for testing)
       refresh-token:
         expiration: 31536000000 # 365 days| 604800000 # 7 days
+
+chunker-service:
+  url: http://localhost:8088/api/v1/files/chunker

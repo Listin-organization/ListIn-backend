@@ -127,7 +127,7 @@ public class GlobalExceptionHandler {
                         .build()
         );
     }
-    
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleException(Exception exception) {
         // Log the exception with full stack trace

@@ -1,6 +1,8 @@
 package com.igriss.ListIn.config.Images;
 
-import com.igriss.ListIn.config.Images.compressor.FileCompressor;
+import com.igriss.ListIn.chunker_client.ChunkerClient;
+import com.igriss.ListIn.chunker_client.ChunkerResponse;
+import com.igriss.ListIn.chunker_client.FileData;
 import com.igriss.ListIn.exceptions.FailedToUploadFileException;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
@@ -20,17 +22,21 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class S3Service {
+
+    private final ChunkerClient chunkerClient;
 
     private final S3Client s3Client;
 
@@ -48,6 +54,12 @@ public class S3Service {
     //todo -> handle the case where S3 is out of memory
     public List<String> uploadFile(List<MultipartFile> files) {
         log.info("Starting sequential stream");
+
+        return isVideoFile(files.get(0)) ? uploadVideo(files.get(0)) : uploadImage(files);
+
+    }
+
+    private List<String> uploadImage(List<MultipartFile> files) {
         return files.stream()
                 .map(file -> {
                     log.info("Generating URL of file {}", file.getOriginalFilename());
@@ -55,21 +67,18 @@ public class S3Service {
                     String ext = FilenameUtils.getExtension(file.getOriginalFilename());
                     String fileName = fileId + "." + ext;
                     String fileUrl = String.format("%s/%s", bucketLink, fileName);
-                    MultipartFile multipartFile;
+
                     try {
                         byte[] fileData = file.getBytes();
                         String contentType = file.getContentType();
 
-                        multipartFile = CompressedMultipartFile.builder()
+                        FileData multipartFile = FileData.builder()
                                 .name(fileName)
                                 .originalFilename(file.getOriginalFilename())
                                 .content(fileData)
                                 .contentType(contentType)
                                 .build();
 
-                        log.info("File URL created {}", fileUrl);
-
-                        // Submit the async task to the executor
                         submitAsyncTask(fileName, multipartFile);
 
                     } catch (IOException e) {
@@ -77,7 +86,47 @@ public class S3Service {
                     }
 
                     return fileUrl;
-                }).collect(Collectors.toList());
+
+                }).toList();
+    }
+
+    private List<String> uploadVideo(MultipartFile f) {
+        log.info("Video file sending to chunker service");
+        ChunkerResponse chunkerResponse = chunkerClient.sendFileToChunker(f);
+        List<MultipartFile> files = chunkerResponse.getFiles().stream().map(fileData -> (MultipartFile) fileData).toList();
+
+        List<String> response = new ArrayList<>();
+
+        files.forEach(file -> {
+
+            String filename = file.getOriginalFilename();
+            String fileUrl = String.format("%s/%s", bucketLink, filename);
+
+            try {
+                byte[] fileData = file.getBytes();
+                String contentType = file.getContentType();
+
+                FileData multipartFile = FileData.builder()
+                        .name(file.getName())
+                        .originalFilename(filename)
+                        .content(fileData)
+                        .contentType(contentType)
+                        .build();
+
+
+                log.info("File URL created {}", fileUrl);
+
+                // Submit the async task to the executor
+                submitAsyncTask(filename, multipartFile);
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            if (fileUrl.endsWith(".m3u8")) response.add(fileUrl);
+
+        });
+
+        return response;
     }
 
     // Make sure to shut down the executor service properly to avoid memory leaks
@@ -135,18 +184,15 @@ public class S3Service {
     private void submitAsyncTask(String fileName, MultipartFile file) {
         executorService.submit(() -> {
             try {
-                log.info("Compressing file {}", file.getOriginalFilename());
-                MultipartFile compressedFile = FileCompressor.compressFile(file);
-                log.info("File compressed {}", compressedFile.getOriginalFilename());
-
-                log.info("Uploading file {}", compressedFile.getOriginalFilename());
-                saveFiles(fileName, compressedFile);
-                log.info("Uploaded file {}", compressedFile.getOriginalFilename());
+                log.info("Uploading file {}", file.getOriginalFilename());
+                saveFiles(fileName, file);
+                log.info("Uploaded file {}", file.getOriginalFilename());
             } catch (Exception e) {
-                log.error("Error processing file {}: {}", file.getOriginalFilename(), e.getMessage());
+                log.error("Error processing file {}", file.getOriginalFilename() + e);
             }
         });
     }
+
 
     private void saveFiles(String fileName, MultipartFile file) {
         try {
@@ -163,6 +209,14 @@ public class S3Service {
             log.error("Error processing file {}: {}", file.getOriginalFilename(), e.getMessage(), exception);
             throw exception;
         }
+    }
+
+
+    private boolean isVideoFile(MultipartFile file) {
+        return switch (Objects.requireNonNull(FilenameUtils.getExtension(file.getOriginalFilename())).toLowerCase()) {
+            case "mkv", "mp4", "mov" -> true;
+            default -> false;
+        };
     }
 
 }
