@@ -21,7 +21,6 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -54,7 +53,7 @@ public class S3Service {
     public List<String> uploadFile(List<MultipartFile> files) {
         log.info("Starting sequential stream");
 
-        return isVideoFile(files.get(0)) ? uploadVideo(files.get(0)) : uploadImage(files);
+        return /*isVideoFile(files.get(0)) ? uploadVideo(files.get(0)) : */uploadImage(files);
 
     }
 
@@ -89,12 +88,12 @@ public class S3Service {
                 }).toList();
     }
 
-    private List<String> uploadVideo(MultipartFile f) {
-        log.info("Video file sending to chunker service");
-        String chunkerResponse = chunkerClient.sendFileToChunker(f).replace("\"","");
-
-        return Collections.singletonList(chunkerResponse);
-    }
+//    private List<String> uploadVideo(MultipartFile f) {
+//        log.info("Video file sending to chunker service");
+//        String chunkerResponse = chunkerClient.sendFileToChunker(f).replace("\"","");
+//
+//        return Collections.singletonList(chunkerResponse);
+//    }
 
     // Make sure to shut down the executor service properly to avoid memory leaks
     @PreDestroy
