@@ -21,6 +21,8 @@ public class UpdatePublicationRequestDTO {
 
     private Boolean bargain;
 
+    private Double aspectRation;
+
     private String productCondition;
 
     private Map<Boolean,List<String>> imageUrls;

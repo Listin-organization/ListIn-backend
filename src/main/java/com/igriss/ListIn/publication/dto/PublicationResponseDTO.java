@@ -51,6 +51,8 @@ public class PublicationResponseDTO implements Serializable {
 
     private Long views;
 
+    private Double aspectRation;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

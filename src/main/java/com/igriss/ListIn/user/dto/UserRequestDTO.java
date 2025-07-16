@@ -14,6 +14,8 @@ public class UserRequestDTO implements Serializable {
 
     private String profileImagePath;
 
+    private String backgroundImagePath;
+
     private String nickName;
 
     private String phoneNumber;

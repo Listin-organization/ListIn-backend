@@ -49,6 +49,8 @@ public class PublicationRequestDTO implements Serializable {
 
     private String productCondition;
 
+    private Double aspectRation;
+
     private List<String> imageUrls;
 
     private String videoUrl;

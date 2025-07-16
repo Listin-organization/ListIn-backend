@@ -4,6 +4,8 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import com.igriss.ListIn.location.dto.LocationDTO;
 import com.igriss.ListIn.location.entity.Country;
 import com.igriss.ListIn.location.service.LocationService;
+import com.igriss.ListIn.publication.entity.Publication;
+import com.igriss.ListIn.publication.repository.PublicationRepository;
 import com.igriss.ListIn.security.roles.Role;
 import com.igriss.ListIn.user.entity.User;
 import com.igriss.ListIn.user.repository.UserRepository;
@@ -36,6 +38,7 @@ public class DatabaseInitializer {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final LocationService locationService;
+    private final PublicationRepository publicationRepository;
 
     @Value("${elasticsearch.index-name}")
     private String indexName;
@@ -90,6 +93,15 @@ public class DatabaseInitializer {
             "/database_sql_scripts/location-tree/states.sql",
             "/database_sql_scripts/location-tree/counties.sql"
     );
+
+    @PostConstruct //todo -> to be removed after use !!!
+    public void addValueForAspectRation() {
+        List<Publication> all = publicationRepository.findAll();
+
+        all.forEach(publication -> {publication.setAspectRation(1.0);});
+
+        publicationRepository.saveAll(all);
+    }
 
 //  @PostConstruct
 //    public void flushRedis() {

@@ -62,9 +62,13 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Modifying
     @Query(value = """
         UPDATE users
-        SET  profile_image_path = CASE
+        SET profile_image_path = CASE
                 WHEN CAST(:profileImagePath AS varchar) IS NOT NULL THEN CAST(:profileImagePath AS varchar)
                 ELSE profile_image_path
+            END,
+            background_image_path = CASE
+                WHEN CAST(:backgroundImagePath AS varchar) IS NOT NULL THEN CAST(:backgroundImagePath AS varchar)
+                ELSE background_image_path
             END,
             nick_name = CASE
                 WHEN CAST(:nickName AS varchar) IS NOT NULL THEN CAST(:nickName AS varchar)
@@ -120,6 +124,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             @Param("userId") UUID userId,
             @Param("nickName") String nickName,
             @Param("profileImagePath") String profileImagePath,
+            @Param("backgroundImagePath") String backgroundImagePath,
             @Param("phoneNumber") String phoneNumber,
             @Param("isGrantedForPreciseLocation") Boolean isGrantedForPreciseLocation,
             @Param("locationName") String locationName,

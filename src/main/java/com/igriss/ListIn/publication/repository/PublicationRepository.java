@@ -47,10 +47,14 @@ public interface PublicationRepository extends JpaRepository<Publication, UUID> 
                 product_condition = CASE
                     WHEN CAST(:productCondition AS varchar) IS NOT NULL THEN CAST(:productCondition AS varchar)
                     ELSE product_condition
+                END,
+                aspect_ration = CASE
+                    WHEN CAST(:aspectRation AS double precision) IS NOT NULL THEN CAST(:aspectRation AS double precision)
+                    ELSE aspect_ration
                 END
             WHERE publication_id = :publicationId
             """, nativeQuery = true)
-    Integer updatePublicationById(UUID publicationId, String title, String description, Float price, Boolean bargain, String productCondition);
+    Integer updatePublicationById(UUID publicationId, String title, String description, Float price, Boolean bargain, String productCondition, Double aspectRation);
 
     Page<Publication> findAllByCategory_ParentCategory_Id(UUID parentCategoryId, Pageable pageable);
 

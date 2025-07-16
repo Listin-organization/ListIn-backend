@@ -268,7 +268,8 @@ public class PublicationServiceImpl implements PublicationService {
                 updatePublication.getDescription(),
                 updatePublication.getPrice(),
                 updatePublication.getBargain(),
-                updatePublication.getProductCondition()
+                updatePublication.getProductCondition(),
+                updatePublication.getAspectRation()
         );
 
         if (isUpdatedPublication != 0) {
