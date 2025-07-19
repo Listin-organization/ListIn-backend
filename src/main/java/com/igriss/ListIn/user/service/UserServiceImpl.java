@@ -256,6 +256,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public PageResponse<FollowsResponseDTO> getRecommendedUsers(Authentication connectedUser, int page, int size) {
+        User currentUser = (User) connectedUser.getPrincipal();
+        Page<FollowsDTO> recommendedUsers = userRepository.findRecommendedUsers(currentUser.getUserId(), PageRequest.of(page, size));
+
+        return getFollowsDTOPageResponse(currentUser.getUserId(), recommendedUsers);
+    }
+
+    @Override
     public UserResponseDTO findById(UUID userId, Authentication authentication) {
 
         User followedUser = userRepository.findById(userId)

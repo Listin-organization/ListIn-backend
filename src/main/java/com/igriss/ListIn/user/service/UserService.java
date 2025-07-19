@@ -58,4 +58,6 @@ public interface UserService {
     List<WSUserResponseDTO> findConnectedUsers();
 
     Optional<User> findUserByEmail(String email);
+
+    PageResponse<FollowsResponseDTO> getRecommendedUsers(Authentication connectedUser, int page, int size);
 }
