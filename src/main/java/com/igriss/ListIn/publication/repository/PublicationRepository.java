@@ -92,4 +92,6 @@ public interface PublicationRepository extends JpaRepository<Publication, UUID> 
             Pageable pageable
     );
 
+    Page<Publication> findBySeller_UserIdInOrderByDatePostedDesc(List<UUID> userIds, Pageable pageable);
+
 }

@@ -32,4 +32,6 @@ public interface PublicationService {
     UUID viewPublication(UUID publicationId, Authentication connectedUser);
 
     Publication getById(UUID publicationId);
+
+    PageResponse<PublicationResponseDTO> getFollowingsPublications(int page, int size, Authentication connectedUser);
 }

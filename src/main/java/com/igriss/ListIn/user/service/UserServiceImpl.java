@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean existsByEmail(String email) {
-       return userRepository.existsByEmail(email);
+        return userRepository.existsByEmail(email);
     }
 
     @Override // todo -> will be fixed the logical bug
@@ -162,6 +162,11 @@ public class UserServiceImpl implements UserService {
         Page<FollowsDTO> allFollowings = userFollowerRepository.findAllFollowings(userId, PageRequest.of(page, size));
 
         return getFollowsDTOPageResponse(userId, allFollowings);
+    }
+
+    @Override
+    public List<UUID> getFollowings(UUID userId) {
+        return userFollowerRepository.findFollowings(userId);
     }
 
 

@@ -109,4 +109,11 @@ public class PublicationController {
     public ResponseEntity<UUID> viewPublication(@PathVariable UUID publicationId, Authentication connectedUser) {
         return ResponseEntity.ok(publicationService.viewPublication(publicationId, connectedUser));
     }
+
+    @GetMapping("/following")
+    public ResponseEntity<PageResponse<PublicationResponseDTO>> getFollowingsPublications(@RequestParam(name = "page", defaultValue = "0", required = false) int page,
+                                                                                          @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+                                                                                          Authentication connectedUser) {
+        return ResponseEntity.ok(publicationService.getFollowingsPublications(page, size, connectedUser));
+    }
 }

@@ -25,6 +25,7 @@ import com.igriss.ListIn.publication.service.PublicationLikeService;
 import com.igriss.ListIn.publication.service.PublicationService;
 import com.igriss.ListIn.publication.service.PublicationViewService;
 import com.igriss.ListIn.search.service.PublicationDocumentService;
+import com.igriss.ListIn.user.dto.FollowsResponseDTO;
 import com.igriss.ListIn.user.entity.User;
 import com.igriss.ListIn.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -198,6 +199,22 @@ public class PublicationServiceImpl implements PublicationService {
     public Publication getById(UUID publicationId) {
         return publicationRepository.findById(publicationId)
                 .orElseThrow(() -> new PublicationNotFoundException("No such Publication found with ID: " + publicationId));
+    }
+
+    @Override
+    public PageResponse<PublicationResponseDTO> getFollowingsPublications(int page, int size, Authentication connectedUser) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("datePosted").descending());
+
+        User user = (User) connectedUser.getPrincipal();
+
+        List<UUID> followingIds = userService.getFollowings(user.getUserId());
+
+        Page<Publication> publications = publicationRepository.findBySeller_UserIdInOrderByDatePostedDesc(followingIds, pageable);
+
+        List<PublicationResponseDTO> publicationResponseDTOS = getPublicationResponseDTOS(publications, user);
+
+        return getPageResponse(publications, publicationResponseDTOS);
     }
 
     @Override
