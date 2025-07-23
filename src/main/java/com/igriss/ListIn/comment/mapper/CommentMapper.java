@@ -13,6 +13,7 @@ public class CommentMapper {
                 .id(comment.getId())
                 .content(comment.getContent())
                 .createdAt(comment.getCreatedAt())
+                .authorImagePath(comment.getAuthor().getProfileImagePath())
                 .authorNickName(comment.getAuthor().getNickName())
                 .authorId(comment.getAuthor().getUserId())
                 .replies(comment.getReplies() != null ? comment.getReplies().stream().map(CommentMapper::toDto).toList() : List.of())

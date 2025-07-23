@@ -1,5 +1,6 @@
 package com.igriss.ListIn.publication.entity;
 
+import com.igriss.ListIn.comment.entity.Comment;
 import com.igriss.ListIn.location.entity.Country;
 import com.igriss.ListIn.location.entity.County;
 import com.igriss.ListIn.location.entity.State;
@@ -18,6 +19,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -98,6 +100,9 @@ public class Publication {
     @ManyToOne
     @JoinColumn(name = "county_id")
     private County county;
+
+    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Comment> comments;
 
     @Column(nullable = false)
     private Double longitude;

@@ -19,6 +19,7 @@ public class CommentResponseDTO {
     private UUID id;
     private String content;
     private LocalDateTime createdAt;
+    private String authorImagePath;
     private String authorNickName;
     private UUID authorId;
     private List<CommentResponseDTO> replies;
