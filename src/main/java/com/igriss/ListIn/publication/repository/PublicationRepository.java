@@ -12,7 +12,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -51,10 +50,14 @@ public interface PublicationRepository extends JpaRepository<Publication, UUID> 
                 aspect_ration = CASE
                     WHEN CAST(:aspectRation AS double precision) IS NOT NULL THEN CAST(:aspectRation AS double precision)
                     ELSE aspect_ration
+                END,
+                  video_preview = CASE
+                    WHEN CAST(:videoPreview AS varchar) IS NOT NULL THEN CAST(:videoPreview AS varchar)
+                    ELSE video_preview
                 END
             WHERE publication_id = :publicationId
             """, nativeQuery = true)
-    Integer updatePublicationById(UUID publicationId, String title, String description, Float price, Boolean bargain, String productCondition, Double aspectRation);
+    Integer updatePublicationById(UUID publicationId, String title, String description, Float price, Boolean bargain, String productCondition, Double aspectRation, String videoPreview);
 
     Page<Publication> findAllByCategory_ParentCategory_Id(UUID parentCategoryId, Pageable pageable);
 
@@ -78,14 +81,14 @@ public interface PublicationRepository extends JpaRepository<Publication, UUID> 
 
     List<Publication> findAllByIdInOrderByDatePosted(List<UUID> publicationIds);
 
-    
+
     List<Publication> findByPriceBetweenAndPublicationStatus(Float minPrice, Float maxPrice, PublicationStatus publicationStatus, PageRequest of);
 
     @Query(value = """
-        SELECT p FROM Publication p
-        WHERE p.category IN :categories
-        AND p.publicationStatus = :status
-        """)
+            SELECT p FROM Publication p
+            WHERE p.category IN :categories
+            AND p.publicationStatus = :status
+            """)
     Page<Publication> findByCategoryInAndPublicationStatus(
             List<Category> categories,
             PublicationStatus status,
@@ -94,4 +97,20 @@ public interface PublicationRepository extends JpaRepository<Publication, UUID> 
 
     Page<Publication> findBySeller_UserIdInOrderByDatePostedDesc(List<UUID> userIds, Pageable pageable);
 
+
+    @Query(value = """
+                select p from Publication p
+                left join PublicationVideo pv
+                on p.id = pv.publication.id
+                where p.seller.userId = :userId and pv is not null
+            """)
+    Page<Publication> findPublicationsContainingVideos(UUID userId, Pageable pageable);
+
+    @Query(value = """
+                select p from Publication p
+                left join PublicationVideo pv
+                on p.id = pv.publication.id
+                where p.seller.userId = :userId and pv is null
+            """)
+    Page<Publication> findPublicationsWithoutVideos(UUID userId, Pageable pageable);
 }

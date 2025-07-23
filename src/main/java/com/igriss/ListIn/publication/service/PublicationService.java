@@ -34,4 +34,8 @@ public interface PublicationService {
     Publication getById(UUID publicationId);
 
     PageResponse<PublicationResponseDTO> getFollowingsPublications(int page, int size, Authentication connectedUser);
+
+    PageResponse<PublicationResponseDTO> getVideoPublications(int page, int size,String userId,  Authentication connectedUser);
+
+    PageResponse<PublicationResponseDTO> getPhotoPublications(int page, int size, String userId, Authentication authentication);
 }

@@ -63,6 +63,9 @@ public class Publication {
     @Column()
     private Double aspectRation = 1.0;
 
+    @Column(nullable = true)
+    private String videoPreview;
+
     @CreatedDate
     @Column(updatable = false, nullable = false)
     private LocalDateTime datePosted;

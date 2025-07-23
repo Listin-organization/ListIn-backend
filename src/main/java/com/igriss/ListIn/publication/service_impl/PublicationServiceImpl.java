@@ -226,6 +226,28 @@ public class PublicationServiceImpl implements PublicationService {
     }
 
     @Override
+    public PageResponse<PublicationResponseDTO> getVideoPublications(int page, int size, String userId, Authentication connectedUser) {
+        User user = (User) connectedUser.getPrincipal();
+        Page<Publication> publicationsContainingVideos =
+                publicationRepository.findPublicationsContainingVideos(userId != null ? UUID.fromString(userId) : user.getUserId(), PageRequest.of(page, size));
+
+        List<PublicationResponseDTO> publicationResponseDTOS = getPublicationResponseDTOS(publicationsContainingVideos, user);
+
+        return getPageResponse(publicationsContainingVideos, publicationResponseDTOS);
+    }
+
+    @Override
+    public PageResponse<PublicationResponseDTO> getPhotoPublications(int page, int size, String userId, Authentication connectedUser) {
+        User user = (User) connectedUser.getPrincipal();
+        Page<Publication> publicationsContainingVideos =
+                publicationRepository.findPublicationsWithoutVideos(userId != null ? UUID.fromString(userId) : user.getUserId(), PageRequest.of(page, size));
+
+        List<PublicationResponseDTO> publicationResponseDTOS = getPublicationResponseDTOS(publicationsContainingVideos, user);
+
+        return getPageResponse(publicationsContainingVideos, publicationResponseDTOS);
+    }
+
+    @Override
     public PageResponse<PublicationResponseDTO> findAllLikedPublications(Integer page, Integer size, Authentication connectedUser) {
         User user = (User) connectedUser.getPrincipal();
 
@@ -294,7 +316,8 @@ public class PublicationServiceImpl implements PublicationService {
                 updatePublication.getPrice(),
                 updatePublication.getBargain(),
                 updatePublication.getProductCondition(),
-                updatePublication.getAspectRation()
+                updatePublication.getAspectRation(),
+                updatePublication.getVideoPreview()
         );
 
         if (isUpdatedPublication != 0) {
