@@ -94,15 +94,6 @@ public class DatabaseInitializer {
             "/database_sql_scripts/location-tree/counties.sql"
     );
 
-//    @PostConstruct //todo -> to be removed after use !!!
-//    public void addValueForAspectRation() {
-//        List<Publication> all = publicationRepository.findAll();
-//
-//        all.forEach(publication -> {publication.setAspectRation(1.0);});
-//
-//        publicationRepository.saveAll(all);
-//    }
-
 //  @PostConstruct
 //    public void flushRedis() {
 //        Objects.requireNonNull(redisTemplate
