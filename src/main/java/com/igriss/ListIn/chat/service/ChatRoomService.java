@@ -7,6 +7,8 @@ import com.igriss.ListIn.publication.service.PublicationService;
 import com.igriss.ListIn.user.entity.User;
 import com.igriss.ListIn.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,12 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserService userService;
     private final PublicationService publicationService;
+    private ChatMessageService chatMessageService;
+
+    @Autowired
+    public void setChatMessageService(@Lazy ChatMessageService chatMessageService){
+        this.chatMessageService = chatMessageService;
+    }
 
     public Optional<ChatRoom> getChatRoom(UUID publicationId, UUID senderId, UUID recipientId, boolean createNewRoomIfNotExists) {
         return chatRoomRepository.findByPublication_IdAndSender_UserIdAndRecipient_UserId(publicationId, senderId, recipientId)
@@ -62,6 +70,11 @@ public class ChatRoomService {
 
         return senderRecipient;
 
+    }
+
+    public void removeChatRoom(UUID publicationId){
+        chatMessageService.removeChatMessages(publicationId);
+        chatRoomRepository.deleteChatRoomByPublicationId(publicationId);
     }
 
     public Optional<ChatRoom> getChatRoomById(UUID chatRoomId) {

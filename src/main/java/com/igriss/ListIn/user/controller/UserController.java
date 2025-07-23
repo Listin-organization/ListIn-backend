@@ -49,8 +49,8 @@ public class UserController {
 
     @GetMapping("/followings/{userId}")
     public ResponseEntity<PageResponse<FollowsResponseDTO>> getFollowings(@PathVariable UUID userId,
-                                                                  @RequestParam(defaultValue = "0") int page,
-                                                                  @RequestParam(defaultValue = "5") int size) {
+                                                                          @RequestParam(defaultValue = "0") int page,
+                                                                          @RequestParam(defaultValue = "5") int size) {
         return ResponseEntity.ok(userService.getFollowings(userId, page, size));
     }
 
@@ -62,6 +62,13 @@ public class UserController {
     @GetMapping("/unfollow/{followedUserId}")
     public ResponseEntity<UserResponseDTO> unFollow(@PathVariable UUID followedUserId, Authentication authentication) throws BadRequestException {
         return ResponseEntity.ok(userService.unFollowFromUser(followedUserId, authentication));
+    }
+
+    @GetMapping("/recommendations")
+    public ResponseEntity<PageResponse<FollowsResponseDTO>> getRecommendedUsers(@RequestParam(defaultValue = "0") int page,
+                                                                             @RequestParam(defaultValue = "5") int size,
+                                                                             Authentication connectedUser) {
+        return ResponseEntity.ok(userService.getRecommendedUsers(connectedUser, page, size));
     }
 
 }

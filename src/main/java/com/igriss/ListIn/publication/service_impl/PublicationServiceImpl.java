@@ -1,11 +1,10 @@
 package com.igriss.ListIn.publication.service_impl;
 
+import com.igriss.ListIn.chat.service.ChatRoomService;
 import com.igriss.ListIn.exceptions.PublicationNotFoundException;
 import com.igriss.ListIn.exceptions.UnauthorizedAccessException;
-
 import com.igriss.ListIn.location.dto.LocationDTO;
 import com.igriss.ListIn.location.service.LocationService;
-
 import com.igriss.ListIn.publication.dto.PublicationRequestDTO;
 import com.igriss.ListIn.publication.dto.PublicationResponseDTO;
 import com.igriss.ListIn.publication.dto.UpdatePublicationRequestDTO;
@@ -30,6 +29,8 @@ import com.igriss.ListIn.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -64,6 +65,14 @@ public class PublicationServiceImpl implements PublicationService {
     private final PublicationAttributeValueService publicationAttributeValueService;
     private final PublicationLikeService publicationLikeService;
     private final PublicationViewService publicationViewService;
+
+    private ChatRoomService chatRoomService;
+
+    @Autowired
+    public void setChatRoomService(@Lazy ChatRoomService chatRoomService) {
+        this.chatRoomService = chatRoomService;
+    }
+
 
     @Override
     @Transactional
@@ -115,7 +124,7 @@ public class PublicationServiceImpl implements PublicationService {
 
         List<PublicationResponseDTO> publicationsDTOList = getPublicationResponseDTOS(publicationPage, user);
 
-        return getPageResponse(publicationPage,publicationsDTOList);
+        return getPageResponse(publicationPage, publicationsDTOList);
     }
 
     @Override
@@ -201,17 +210,55 @@ public class PublicationServiceImpl implements PublicationService {
     }
 
     @Override
+    public PageResponse<PublicationResponseDTO> getFollowingsPublications(int page, int size, Authentication connectedUser) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("datePosted").descending());
+
+        User user = (User) connectedUser.getPrincipal();
+
+        List<UUID> followingIds = userService.getFollowings(user.getUserId());
+
+        Page<Publication> publications = publicationRepository.findBySeller_UserIdInOrderByDatePostedDesc(followingIds, pageable);
+
+        List<PublicationResponseDTO> publicationResponseDTOS = getPublicationResponseDTOS(publications, user);
+
+        return getPageResponse(publications, publicationResponseDTOS);
+    }
+
+    @Override
+    public PageResponse<PublicationResponseDTO> getVideoPublications(int page, int size, String userId, Authentication connectedUser) {
+        User user = (User) connectedUser.getPrincipal();
+        Page<Publication> publicationsContainingVideos =
+                publicationRepository.findPublicationsContainingVideos(userId != null ? UUID.fromString(userId) : user.getUserId(), PageRequest.of(page, size));
+
+        List<PublicationResponseDTO> publicationResponseDTOS = getPublicationResponseDTOS(publicationsContainingVideos, user);
+
+        return getPageResponse(publicationsContainingVideos, publicationResponseDTOS);
+    }
+
+    @Override
+    public PageResponse<PublicationResponseDTO> getPhotoPublications(int page, int size, String userId, Authentication connectedUser) {
+        User user = (User) connectedUser.getPrincipal();
+        Page<Publication> publicationsContainingVideos =
+                publicationRepository.findPublicationsWithoutVideos(userId != null ? UUID.fromString(userId) : user.getUserId(), PageRequest.of(page, size));
+
+        List<PublicationResponseDTO> publicationResponseDTOS = getPublicationResponseDTOS(publicationsContainingVideos, user);
+
+        return getPageResponse(publicationsContainingVideos, publicationResponseDTOS);
+    }
+
+    @Override
     public PageResponse<PublicationResponseDTO> findAllLikedPublications(Integer page, Integer size, Authentication connectedUser) {
         User user = (User) connectedUser.getPrincipal();
 
         Page<PublicationLike> likedPublications = publicationLikeService.getLikedPublications(user, PageRequest.of(page, size));
 
         Page<Publication> publicationPage = likedPublications.map(publicationLike ->
-                        publicationRepository.findById(publicationLike.getPublication().getId()).orElseThrow(() -> new PublicationNotFoundException(
-                                String.format("Publication with ID '%s' not found", publicationLike.getPublication().getId()))
-                        )
+                publicationRepository.findById(publicationLike.getPublication().getId()).orElseThrow(() -> new PublicationNotFoundException(
+                        String.format("Publication with ID '%s' not found", publicationLike.getPublication().getId()))
+                )
 
-                );
+        );
 
         List<PublicationResponseDTO> publicationResponseDTOS = publicationPage.stream()
                 .map(publication -> {
@@ -268,7 +315,9 @@ public class PublicationServiceImpl implements PublicationService {
                 updatePublication.getDescription(),
                 updatePublication.getPrice(),
                 updatePublication.getBargain(),
-                updatePublication.getProductCondition()
+                updatePublication.getProductCondition(),
+                updatePublication.getAspectRation(),
+                updatePublication.getVideoPreview()
         );
 
         if (isUpdatedPublication != 0) {
@@ -307,29 +356,24 @@ public class PublicationServiceImpl implements PublicationService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<Object> deletePublication(UUID publicationId, Authentication authentication) {
 
         return publicationRepository.findById(publicationId).map(publication -> {
 
-            publicationRepository.deleteById(publicationId);
-
+            chatRoomService.removeChatRoom(publicationId);
             publicationAttributeValueService.deletePublicationAttributes(publicationId);
-
             productFileService.deletePublicationFiles(publicationId);
-
             publicationDocumentService.deleteById(publicationId);
-
             numericValueService.deletePublicationNumericFields(publicationId);
-
             publicationLikeService.deletePublicationLikes(publicationId);
-
             publicationViewService.deletePublicationViews(publicationId);
+
+            publicationRepository.deleteById(publicationId);
 
             return ResponseEntity.noContent().build();
 
         }).orElse(ResponseEntity.notFound().build());
-
     }
 
     @NotNull

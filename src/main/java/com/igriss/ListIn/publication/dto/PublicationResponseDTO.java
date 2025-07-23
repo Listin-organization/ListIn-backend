@@ -51,6 +51,10 @@ public class PublicationResponseDTO implements Serializable {
 
     private Long views;
 
+    private Double aspectRation;
+
+    private String videoPreview;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

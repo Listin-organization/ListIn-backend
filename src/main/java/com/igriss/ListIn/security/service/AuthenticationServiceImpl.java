@@ -93,7 +93,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .userResponseDTO(userMapper.toUserResponseDTO(user))
                     .build();
         } catch (Exception exception) {
-            log.warn("User with credentials: email '{}' and password '{}' does not exist",request.getEmail(), request.getPassword());
+            log.warn("User with credentials: email '{}' does not exist", request.getEmail());
             throw new UserNotFoundException("Wrong email and/or password");
         }
 

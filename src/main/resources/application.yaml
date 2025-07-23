@@ -1,7 +1,7 @@
 spring:
   config:
     import:
-        - swagger-messages.yaml
+      - swagger-messages.yaml
   profiles:
     active: prod
   servlet:
@@ -10,15 +10,6 @@ spring:
       max-request-size: 100MB
   application:
     name: ListIn
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: false
-    properties:
-      hibernate:
-        format_sql: true
-    database: postgresql
-    open-in-view: off
   security:
     oauth2:
       client:
@@ -56,3 +47,6 @@ application:
       expiration: 31536000000 # 365 days | 86400000 # 1 day  | 60000 1 minute (for testing)
       refresh-token:
         expiration: 31536000000 # 365 days| 604800000 # 7 days
+
+chunker-service:
+  url: http://localhost:8088/api/v1/files/chunker

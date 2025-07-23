@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean existsByEmail(String email) {
-       return userRepository.existsByEmail(email);
+        return userRepository.existsByEmail(email);
     }
 
     @Override // todo -> will be fixed the logical bug
@@ -117,11 +117,12 @@ public class UserServiceImpl implements UserService {
                 user.getUserId(),
                 userRequestDTO.getNickName(),
                 userRequestDTO.getProfileImagePath(),
+                userRequestDTO.getBackgroundImagePath(),
                 userRequestDTO.getPhoneNumber(),
                 userRequestDTO.getIsGrantedForPreciseLocation(),
                 userRequestDTO.getLocationName(),
-                location.getCountry().getId(),
-                location.getState().getId(),
+                location.getCountry() != null ? location.getCountry().getId() : null,
+                location.getState() != null ? location.getState().getId() : null,
                 location.getCounty() != null ? location.getCounty().getId() : null,
                 userRequestDTO.getLongitude(),
                 userRequestDTO.getLatitude(),
@@ -161,6 +162,11 @@ public class UserServiceImpl implements UserService {
         Page<FollowsDTO> allFollowings = userFollowerRepository.findAllFollowings(userId, PageRequest.of(page, size));
 
         return getFollowsDTOPageResponse(userId, allFollowings);
+    }
+
+    @Override
+    public List<UUID> getFollowings(UUID userId) {
+        return userFollowerRepository.findFollowings(userId);
     }
 
 
@@ -247,6 +253,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findUserByEmail(String username) {
         return userRepository.findByEmail(username);
+    }
+
+    @Override
+    public PageResponse<FollowsResponseDTO> getRecommendedUsers(Authentication connectedUser, int page, int size) {
+        User currentUser = (User) connectedUser.getPrincipal();
+        Page<FollowsDTO> recommendedUsers = userRepository.findRecommendedUsers(currentUser.getUserId(), PageRequest.of(page, size));
+
+        return getFollowsDTOPageResponse(currentUser.getUserId(), recommendedUsers);
     }
 
     @Override

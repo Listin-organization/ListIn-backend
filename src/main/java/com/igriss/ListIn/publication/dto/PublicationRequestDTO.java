@@ -1,6 +1,11 @@
 package com.igriss.ListIn.publication.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,14 +22,19 @@ import java.util.UUID;
 @ToString
 public class PublicationRequestDTO implements Serializable {
 
+    @NotBlank(message = "Title is required")
     private String title;
 
+    @NotBlank(message = "Description is required")
     private String description;
 
+    @DecimalMin(value = "10000", message = "Price must be at least 10,000")
+    @DecimalMax(value = "1000000000", message = "Price must be at most 1,000,000,000")
     private Float price;
 
     private Boolean bargain;
 
+    @Pattern(regexp = "^\\+998(\\s?\\d){9}$", message = "Phone Number must be in the format +998 00 123 45 67")
     private String phoneNumber;
 
     @JsonFormat(pattern = "HH:mm")
@@ -49,6 +59,11 @@ public class PublicationRequestDTO implements Serializable {
 
     private String productCondition;
 
+    private Double aspectRation;
+
+    private String videoPreview;
+
+    @NotEmpty(message = "At least an image is required")
     private List<String> imageUrls;
 
     private String videoUrl;

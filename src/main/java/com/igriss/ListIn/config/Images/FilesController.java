@@ -29,7 +29,6 @@ public class FilesController {
 
     @PostMapping(value = "/upload/video")
     public ResponseEntity<?> uploadVideo(@RequestParam(name = "video") MultipartFile video) {
-        log.info("😋😋😋😋😋 came here whooo");
         return ResponseEntity.ok(productFileService.uploadVideoURL(video));
     }
 

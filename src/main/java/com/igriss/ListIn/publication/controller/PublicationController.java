@@ -109,4 +109,28 @@ public class PublicationController {
     public ResponseEntity<UUID> viewPublication(@PathVariable UUID publicationId, Authentication connectedUser) {
         return ResponseEntity.ok(publicationService.viewPublication(publicationId, connectedUser));
     }
+
+    @GetMapping("/following")
+    public ResponseEntity<PageResponse<PublicationResponseDTO>> getFollowingsPublications(@RequestParam(name = "page", defaultValue = "0", required = false) int page,
+                                                                                          @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+                                                                                          Authentication connectedUser) {
+        return ResponseEntity.ok(publicationService.getFollowingsPublications(page, size, connectedUser));
+    }
+
+    @GetMapping("/with-videos")
+    public ResponseEntity<PageResponse<PublicationResponseDTO>> getUserPostsContainingVideos(@RequestParam(name = "page", defaultValue = "0", required = false) int page,
+                                                                                             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+                                                                                             @RequestParam(name = "userId", required = false) String userId,
+                                                                                             Authentication connectedUser) {
+        return ResponseEntity.ok(publicationService.getVideoPublications(page, size, userId, connectedUser));
+    }
+
+    @GetMapping("/without-videos")
+    public ResponseEntity<PageResponse<PublicationResponseDTO>> getUserPostsContainingPhotos(@RequestParam(name = "page", defaultValue = "0", required = false) int page,
+                                                                                             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+                                                                                             @RequestParam(name = "userId", required = false) String userId,
+                                                                                             Authentication connectedUser
+    ) {
+        return ResponseEntity.ok(publicationService.getPhotoPublications(page, size, userId, connectedUser));
+    }
 }

@@ -41,6 +41,8 @@ public class UserResponseDTO {
 
     private String profileImagePath;
 
+    private String backgroundImagePath;
+
     private Float rating;
 
     private Boolean isGrantedForPreciseLocation;

@@ -129,4 +129,8 @@ public class ChatMessageService {
     public Optional<ChatMessage> findLastMessage(String chatRoomId) {
         return chatMessageRepository.findTopByChatRoom_ChatRoomIdOrderByCreatedAtDesc(chatRoomId);
     }
+
+    public void removeChatMessages(UUID publicationId){
+        chatMessageRepository.deleteChatMessagesByChatRoom_Publication_Id(publicationId);
+    }
 }
