@@ -3,7 +3,7 @@ spring:
     import:
       - swagger-messages.yaml
   profiles:
-    active: prod
+    active: dev
   servlet:
     multipart:
       max-file-size: 100MB

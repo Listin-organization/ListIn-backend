@@ -49,6 +49,7 @@ public class CommentServiceImpl implements CommentService {
 
         Comment comment = Comment.builder()
                 .content(request.getContent())
+                .repliedUser(request.getRepliedUser())
                 .publication(publication)
                 .author(author)
                 .parent(parent)
