@@ -96,10 +96,10 @@ public class DatabaseInitializer {
             "/database_sql_scripts/location-tree/counties.sql"
     );
 
-    @PostConstruct //todo -> to be removed before next use
-    public void addZeros() {
-        repository.deleteAll();
-    }
+//    @PostConstruct //todo -> to be removed before next use
+//    public void addZeros() {
+//        repository.deleteAll();
+//    }
 
   @PostConstruct
     public void flushRedis() {

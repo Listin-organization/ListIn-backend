@@ -16,6 +16,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class CommentResponseDTO {
     private UUID id;
+    private UUID parentCommentId;
+    private UUID repliedUserId;
     private String repliedUser;
     private String content;
     private LocalDateTime createdAt;

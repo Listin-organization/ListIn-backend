@@ -10,6 +10,7 @@ import com.igriss.ListIn.publication.dto.page.PageResponse;
 import com.igriss.ListIn.publication.entity.Publication;
 import com.igriss.ListIn.publication.service.PublicationService;
 import com.igriss.ListIn.user.entity.User;
+import com.igriss.ListIn.user.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,7 @@ import java.util.UUID;
 public class CommentServiceImpl implements CommentService {
 
     private final PublicationService publicationService;
-
+    private final UserService userService;
     private final CommentRepository commentRepository;
 
     @Override
@@ -49,7 +50,7 @@ public class CommentServiceImpl implements CommentService {
 
         Comment comment = Comment.builder()
                 .content(request.getContent())
-                .repliedUser(request.getRepliedUser())
+                .repliedUser(request.getRepliedUserId() != null ? userService.getById(request.getRepliedUserId()) : null)
                 .publication(publication)
                 .author(author)
                 .parent(parent)

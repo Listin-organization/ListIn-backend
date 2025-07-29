@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class CommentRequestDTO {
     private UUID publicationId;
-    private String repliedUser;
+    private UUID repliedUserId;
     private String content;
     private UUID parentId;
 }
