@@ -6,11 +6,17 @@ import com.igriss.ListIn.comment.entity.Comment;
 import com.igriss.ListIn.comment.mapper.CommentMapper;
 import com.igriss.ListIn.comment.repository.CommentRepository;
 import com.igriss.ListIn.comment.service.CommentService;
+import com.igriss.ListIn.publication.dto.page.PageResponse;
 import com.igriss.ListIn.publication.entity.Publication;
 import com.igriss.ListIn.publication.service.PublicationService;
 import com.igriss.ListIn.user.entity.User;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +45,8 @@ public class CommentServiceImpl implements CommentService {
                     .orElseThrow(() -> new EntityNotFoundException("Parent comment not found"));
         }
 
+        publication.setCommentsCount(publication.getCommentsCount() + 1);
+
         Comment comment = Comment.builder()
                 .content(request.getContent())
                 .publication(publication)
@@ -52,20 +60,43 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CommentResponseDTO> getCommentsForPublication(UUID publicationId) {
+    public PageResponse<CommentResponseDTO> getCommentsForPublication(int page, int size, UUID publicationId) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
         Publication publication = publicationService.getById(publicationId);
-        List<Comment> topLevelComments = commentRepository.findByPublicationAndParentIsNullOrderByCreatedAtDesc(publication);
+        Page<Comment> topLevelComments = commentRepository.findByPublicationAndParentIsNull(publication, pageable);
 
-        return topLevelComments.stream()
+        List<CommentResponseDTO> dtoComments = topLevelComments.stream()
                 .map(CommentMapper::toDto)
                 .toList();
+
+        return getPageResponse(dtoComments, topLevelComments);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<CommentResponseDTO> getReplies(UUID parentCommentId) {
-        return commentRepository.findByParent_id(parentCommentId).stream()
+    public PageResponse<CommentResponseDTO> getReplies(int page, int size, UUID parentCommentId) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        Page<Comment> repliesPage = commentRepository.findByParent_id(parentCommentId, pageable);
+        List<CommentResponseDTO> dtoReplies = repliesPage.stream()
                 .map(CommentMapper::toDto).toList();
+
+        return getPageResponse(dtoReplies, repliesPage);
+    }
+
+    @NotNull
+    private static PageResponse<CommentResponseDTO> getPageResponse(List<CommentResponseDTO> dtoComments, Page<Comment> topLevelComments) {
+        return new PageResponse<>(
+                dtoComments,
+                topLevelComments.getNumber(),
+                topLevelComments.getSize(),
+                topLevelComments.getTotalElements(),
+                topLevelComments.getTotalPages(),
+                topLevelComments.isFirst(),
+                topLevelComments.isLast()
+        );
     }
 }

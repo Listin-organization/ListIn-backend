@@ -1,5 +1,6 @@
 package com.igriss.ListIn.publication.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.igriss.ListIn.comment.entity.Comment;
 import com.igriss.ListIn.location.entity.Country;
 import com.igriss.ListIn.location.entity.County;
@@ -118,9 +119,13 @@ public class Publication {
     @JoinColumn(name = "county_id")
     private County county;
 
-    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
     @ToString.Exclude
+    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Comment> comments;
+
+    @Column()
+    private Integer commentsCount;
 
     @Column(nullable = false)
     private Double longitude;

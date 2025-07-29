@@ -79,4 +79,6 @@ public class PublicationResponseDTO implements Serializable {
 
     private PublicationAttributeValueDTO attributeValue;
 
+    private Integer totalComments;
+
 }

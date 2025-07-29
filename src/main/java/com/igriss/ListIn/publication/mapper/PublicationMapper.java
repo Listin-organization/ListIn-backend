@@ -66,6 +66,7 @@ public class PublicationMapper {
                 .county(location.getCounty())
                 .longitude(requestDTO.getLongitude())
                 .latitude(requestDTO.getLatitude())
+                .commentsCount(0)
                 .build();
     }
 
@@ -98,6 +99,7 @@ public class PublicationMapper {
                 .longitude(publication.getLongitude())
                 .latitude(publication.getLatitude())
                 .attributeValue(publicationAttributeValueMapper.toPublicationAttributeValueDTO(publication, numericValues))
+                .totalComments(publication.getCommentsCount())
                 .build();
     }
 }

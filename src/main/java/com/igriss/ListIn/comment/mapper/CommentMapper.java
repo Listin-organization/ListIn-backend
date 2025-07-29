@@ -3,8 +3,6 @@ package com.igriss.ListIn.comment.mapper;
 import com.igriss.ListIn.comment.dto.CommentResponseDTO;
 import com.igriss.ListIn.comment.entity.Comment;
 
-import java.util.List;
-
 public class CommentMapper {
 
     public static CommentResponseDTO toDto(Comment comment) {
@@ -16,7 +14,7 @@ public class CommentMapper {
                 .authorImagePath(comment.getAuthor().getProfileImagePath())
                 .authorNickName(comment.getAuthor().getNickName())
                 .authorId(comment.getAuthor().getUserId())
-                .replies(comment.getReplies() != null ? comment.getReplies().stream().map(CommentMapper::toDto).toList() : List.of())
+                .totalReplies(comment.getReplies() != null ? comment.getReplies().size() : 0)
                 .build();
     }
 }

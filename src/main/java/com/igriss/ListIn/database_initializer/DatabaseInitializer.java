@@ -94,6 +94,17 @@ public class DatabaseInitializer {
             "/database_sql_scripts/location-tree/counties.sql"
     );
 
+    @PostConstruct //todo -> to be removed before next use
+    public void addZeros() {
+        publicationRepository.findAll().forEach(publication -> {
+            if (publication.getCommentsCount() == null) {
+                publication.setCommentsCount(0);
+                publicationRepository.save(publication);
+            }
+        });
+    }
+
+
 //  @PostConstruct
 //    public void flushRedis() {
 //        Objects.requireNonNull(redisTemplate
