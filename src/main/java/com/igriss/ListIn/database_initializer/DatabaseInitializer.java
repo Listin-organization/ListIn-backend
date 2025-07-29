@@ -1,6 +1,7 @@
 package com.igriss.ListIn.database_initializer;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import com.igriss.ListIn.comment.repository.CommentRepository;
 import com.igriss.ListIn.location.dto.LocationDTO;
 import com.igriss.ListIn.location.entity.Country;
 import com.igriss.ListIn.location.service.LocationService;
@@ -39,6 +40,7 @@ public class DatabaseInitializer {
     private final PasswordEncoder passwordEncoder;
     private final LocationService locationService;
     private final PublicationRepository publicationRepository;
+    private final CommentRepository repository;
 
     @Value("${elasticsearch.index-name}")
     private String indexName;
@@ -96,14 +98,8 @@ public class DatabaseInitializer {
 
     @PostConstruct //todo -> to be removed before next use
     public void addZeros() {
-        publicationRepository.findAll().forEach(publication -> {
-            if (publication.getCommentsCount() == null) {
-                publication.setCommentsCount(0);
-                publicationRepository.save(publication);
-            }
-        });
+        repository.deleteAll();
     }
-
 
 //  @PostConstruct
 //    public void flushRedis() {

@@ -40,6 +40,8 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    private String repliedUser;
+
     @Column(nullable = false, length = 2000)
     private String content;
 

@@ -9,6 +9,7 @@ public class CommentMapper {
         return CommentResponseDTO
                 .builder()
                 .id(comment.getId())
+                .repliedUser(comment.getRepliedUser())
                 .content(comment.getContent())
                 .createdAt(comment.getCreatedAt())
                 .authorImagePath(comment.getAuthor().getProfileImagePath())
