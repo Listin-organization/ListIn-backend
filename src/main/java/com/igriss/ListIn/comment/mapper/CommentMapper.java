@@ -11,7 +11,7 @@ public class CommentMapper {
                 .id(comment.getId())
                 .parentCommentId(comment.getParent() != null ? comment.getParent().getId() : null)
                 .repliedUserId(comment.getRepliedUser() != null ? comment.getRepliedUser().getUserId() : null)
-                .repliedUser(comment.getRepliedUser() != null ? comment.getRepliedUser().getUsername() : null)
+                .repliedUser(comment.getRepliedUser() != null ? comment.getRepliedUser().getNickName() : null)
                 .content(comment.getContent())
                 .createdAt(comment.getCreatedAt())
                 .authorImagePath(comment.getAuthor().getProfileImagePath())

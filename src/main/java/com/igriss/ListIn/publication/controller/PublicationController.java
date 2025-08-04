@@ -36,7 +36,6 @@ import java.util.UUID;
 public class PublicationController {
 
     private final PublicationService publicationService;
-    private final PublicationRepository publicationRepository;
 
     private final PublicationAttributeValueRepository repo;
 
@@ -55,9 +54,9 @@ public class PublicationController {
     }
 
     @Operation(summary = "${publication-controller.get-by-id.summary}", description = "${publication-controller.get-by-id.description}")
-    @GetMapping("/{publicationId}") // todo -> to be modified, this is for test used only !
-    public ResponseEntity<Publication> getPublicationById(@PathVariable UUID publicationId) {
-        return ResponseEntity.ok(publicationRepository.findById(publicationId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
+    @GetMapping("/{publicationId}")
+    public ResponseEntity<PublicationResponseDTO> getPublicationById(@PathVariable UUID publicationId, Authentication connectedUser) {
+        return ResponseEntity.ok(publicationService.getById(publicationId, connectedUser));
     }
 
     @GetMapping("/PAV/{publicationId}") // todo -> to be modified, this is for test used only !

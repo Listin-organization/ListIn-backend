@@ -193,9 +193,25 @@ public class PublicationServiceImpl implements PublicationService {
     }
 
     @Override
-    public Publication getById(UUID publicationId) {
-        return publicationRepository.findById(publicationId)
+    public PublicationResponseDTO getById(UUID publicationId, Authentication connectedUser) {
+
+        User currentUser = (User) connectedUser.getPrincipal();
+
+        Publication publication = publicationRepository.findById(publicationId)
                 .orElseThrow(() -> new PublicationNotFoundException("No such Publication found with ID: " + publicationId));
+
+        var publicationImages = productFileService.findImagesByPublicationId(publication.getId());
+        var publicationVideoUrl = productFileService.findVideoUrlByPublicationId(publication.getId());
+        var publicationNumericFields = numericValueService.findNumericFields(publication.getId());
+        var isLiked = publicationLikeService.isLiked(currentUser.getUserId(), publication.getId());
+        var isFollowing = userService.isFollowingToUser(currentUser.getUserId(), publication.getId());
+
+        return publicationMapper.toPublicationResponseDTO(publication, publicationImages, publicationVideoUrl, publicationNumericFields, isLiked, isFollowing);
+    }
+
+    @Override
+    public Publication getByIdAsEntity(UUID publicationId) {
+        return publicationRepository.findById(publicationId).orElseThrow(() -> new PublicationNotFoundException("No such Publication found with ID: " + publicationId));
     }
 
     @Override

@@ -38,7 +38,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentResponseDTO addComment(CommentRequestDTO request, Authentication currentUser) {
         User author = (User) currentUser.getPrincipal();
 
-        Publication publication = publicationService.getById(request.getPublicationId());
+        Publication publication = publicationService.getByIdAsEntity(request.getPublicationId());
 
         Comment parent = null;
         if (request.getParentId() != null) {
@@ -66,7 +66,7 @@ public class CommentServiceImpl implements CommentService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
-        Publication publication = publicationService.getById(publicationId);
+        Publication publication = publicationService.getByIdAsEntity(publicationId);
         Page<Comment> topLevelComments = commentRepository.findByPublicationAndParentIsNull(publication, pageable);
 
         List<CommentResponseDTO> dtoComments = topLevelComments.stream()

@@ -1,6 +1,8 @@
 package com.igriss.ListIn.database_initializer;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import com.igriss.ListIn.chat.repository.ChatMessageRepository;
+import com.igriss.ListIn.chat.repository.ChatRoomRepository;
 import com.igriss.ListIn.comment.repository.CommentRepository;
 import com.igriss.ListIn.location.dto.LocationDTO;
 import com.igriss.ListIn.location.entity.Country;
@@ -41,6 +43,8 @@ public class DatabaseInitializer {
     private final LocationService locationService;
     private final PublicationRepository publicationRepository;
     private final CommentRepository repository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     @Value("${elasticsearch.index-name}")
     private String indexName;
@@ -97,8 +101,8 @@ public class DatabaseInitializer {
     );
 
     @PostConstruct //todo -> to be removed before next use
-    public void deleteComments() {
-        repository.deleteAll();
+    public void delete() {
+        chatRoomRepository.deleteAll();
     }
 
 //  @PostConstruct
