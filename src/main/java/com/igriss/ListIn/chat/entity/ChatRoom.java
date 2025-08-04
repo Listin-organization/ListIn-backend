@@ -1,6 +1,5 @@
 package com.igriss.ListIn.chat.entity;
 
-import com.igriss.ListIn.publication.entity.Publication;
 import com.igriss.ListIn.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

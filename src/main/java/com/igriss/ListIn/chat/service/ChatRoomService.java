@@ -2,13 +2,9 @@ package com.igriss.ListIn.chat.service;
 
 import com.igriss.ListIn.chat.entity.ChatRoom;
 import com.igriss.ListIn.chat.repository.ChatRoomRepository;
-import com.igriss.ListIn.publication.entity.Publication;
-import com.igriss.ListIn.publication.service.PublicationService;
 import com.igriss.ListIn.user.entity.User;
 import com.igriss.ListIn.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

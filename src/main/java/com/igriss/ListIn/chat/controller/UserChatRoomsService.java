@@ -6,8 +6,6 @@ import com.igriss.ListIn.chat.mapper.ChatMessageMapper;
 import com.igriss.ListIn.chat.mapper.ChatRoomMapper;
 import com.igriss.ListIn.chat.repository.ChatRoomRepository;
 import com.igriss.ListIn.chat.service.ChatMessageService;
-import com.igriss.ListIn.exceptions.ResourceNotFoundException;
-import com.igriss.ListIn.publication.service.ProductFileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

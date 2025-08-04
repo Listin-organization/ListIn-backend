@@ -2,7 +2,6 @@ package com.igriss.ListIn.chat.mapper;
 
 import com.igriss.ListIn.chat.dto.ChatRoomResponseDTO;
 import com.igriss.ListIn.chat.entity.ChatRoom;
-import com.igriss.ListIn.publication.entity.Publication;
 import com.igriss.ListIn.user.entity.User;
 import org.springframework.stereotype.Component;
 
