@@ -37,7 +37,6 @@ public class ChatController {
                 .id(savedMsg.getId())
                 .senderId(savedMsg.getSender().getUserId())
                 .recipientId(savedMsg.getRecipient().getUserId())
-                .publicationId(savedMsg.getChatRoom().getPublication().getId())
                 .content(savedMsg.getContent())
                 .status(savedMsg.getStatus())
                 .sentAt(savedMsg.getCreatedAt())
@@ -70,9 +69,9 @@ public class ChatController {
     }
 
 
-    @GetMapping("/messages/{publicationId}/{senderId}/{recipientId}")
-    public ResponseEntity<List<ChatMessageResponseDTO>> findChatMessages(@PathVariable UUID publicationId, @PathVariable UUID senderId, @PathVariable UUID recipientId) {
-        return ResponseEntity.ok(chatMessageService.findChatMessages(publicationId, senderId, recipientId));
+    @GetMapping("/messages/{senderId}/{recipientId}")
+    public ResponseEntity<List<ChatMessageResponseDTO>> findChatMessages(@PathVariable UUID senderId, @PathVariable UUID recipientId) {
+        return ResponseEntity.ok(chatMessageService.findChatMessages(senderId, recipientId));
     }
 
 }

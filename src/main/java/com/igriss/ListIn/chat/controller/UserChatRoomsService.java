@@ -22,7 +22,6 @@ public class UserChatRoomsService {
     private final ChatMessageService chatMessageService;
     private final ChatRoomMapper chatRoomMapper;
     private final ChatRoomRepository chatRoomRepository;
-    private final ProductFileService productFileService;
 
     public List<ChatRoomResponseDTO> getUserChatRooms(UUID userId) {
         List<ChatRoom> chatRooms = chatRoomRepository.findBySender_UserId(userId);
@@ -30,19 +29,10 @@ public class UserChatRoomsService {
         return chatRooms.stream()
                 .map(chatRoomMapper::toDTO)
                 .peek(chatRoomDTO -> {
-                    // Set publication image
-                    String imageUrl = productFileService.findImagesByPublicationId(chatRoomDTO.getPublicationId())
-                            .stream()
-                            .findFirst()
-                            .orElseThrow(() -> new ResourceNotFoundException("Publication images not found"))
-                            .getImageUrl();
-                    chatRoomDTO.setPublicationImagePath(imageUrl);
-
                     // Set last message
                     chatMessageService.findLastMessage(chatRoomDTO.getChatRoomId())
                             .map(messageMapper::toDTO)
                             .ifPresent(chatRoomDTO::setLastMessage);
-
                 })
                 .toList();
     }

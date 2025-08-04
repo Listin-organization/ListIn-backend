@@ -17,6 +17,4 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, UUID> 
     Optional<ChatMessage> findTopByChatRoom_ChatRoomIdOrderByCreatedAtDesc(String chatRoomId);
 
     List<ChatMessage> findByContentAndCreatedAtAndSenderAndRecipient(String content, LocalDateTime createdAt, User sender, User recipient);
-
-    void deleteChatMessagesByChatRoom_Publication_Id(UUID chatRoomPublicationId);
 }

@@ -19,7 +19,6 @@ public class ChatMessageResponseDTO {
     private UUID id;
     private UUID senderId;
     private UUID recipientId;
-    private UUID publicationId;
     private String content;
     private DeliveryStatus status;
     private LocalDateTime sentAt;

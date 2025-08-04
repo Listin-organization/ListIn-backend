@@ -36,10 +36,10 @@ public class ChatMessageService {
         UUID senderId = request.getSenderId();
         UUID recipientId = request.getRecipientId();
 
-        ChatRoom chatRoom = chatRoomService.getChatRoom(request.getPublicationId(), senderId, recipientId, true)
+        ChatRoom chatRoom = chatRoomService.getChatRoom(senderId, recipientId, true)
                 .orElseThrow(() -> new ResourceNotFoundException("Chat room not found"));
 
-        ChatRoom chatRoomReflection = chatRoomService.getChatRoom(request.getPublicationId(), recipientId, senderId, true)
+        ChatRoom chatRoomReflection = chatRoomService.getChatRoom(recipientId, senderId, true)
                 .orElseThrow(() -> new ResourceNotFoundException("Chat room not found"));
 
         User originalSender = chatRoom.getSender();
@@ -114,8 +114,8 @@ public class ChatMessageService {
     }
 
 
-    public List<ChatMessageResponseDTO> findChatMessages(UUID publicationId, UUID senderId, UUID recipientId) {
-        Optional<ChatRoom> chatRoomOptional = chatRoomService.getChatRoom(publicationId, senderId, recipientId, false);
+    public List<ChatMessageResponseDTO> findChatMessages(UUID senderId, UUID recipientId) {
+        Optional<ChatRoom> chatRoomOptional = chatRoomService.getChatRoom(senderId, recipientId, false);
 
         if (chatRoomOptional.isEmpty()) {
             return Collections.emptyList();
@@ -128,9 +128,5 @@ public class ChatMessageService {
 
     public Optional<ChatMessage> findLastMessage(String chatRoomId) {
         return chatMessageRepository.findTopByChatRoom_ChatRoomIdOrderByCreatedAtDesc(chatRoomId);
-    }
-
-    public void removeChatMessages(UUID publicationId){
-        chatMessageRepository.deleteChatMessagesByChatRoom_Publication_Id(publicationId);
     }
 }

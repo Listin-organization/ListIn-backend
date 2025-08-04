@@ -66,14 +66,6 @@ public class PublicationServiceImpl implements PublicationService {
     private final PublicationLikeService publicationLikeService;
     private final PublicationViewService publicationViewService;
 
-    private ChatRoomService chatRoomService;
-
-    @Autowired
-    public void setChatRoomService(@Lazy ChatRoomService chatRoomService) {
-        this.chatRoomService = chatRoomService;
-    }
-
-
     @Override
     @Transactional
     public UUID savePublication(PublicationRequestDTO request, Authentication authentication) {
@@ -361,7 +353,6 @@ public class PublicationServiceImpl implements PublicationService {
 
         return publicationRepository.findById(publicationId).map(publication -> {
 
-            chatRoomService.removeChatRoom(publicationId);
             publicationAttributeValueService.deletePublicationAttributes(publicationId);
             productFileService.deletePublicationFiles(publicationId);
             publicationDocumentService.deleteById(publicationId);

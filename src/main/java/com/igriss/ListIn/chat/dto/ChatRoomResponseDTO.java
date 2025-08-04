@@ -16,11 +16,6 @@ import java.util.UUID;
 public class ChatRoomResponseDTO {
     private String chatRoomId;
 
-    private UUID publicationId;
-    private String publicationImagePath;
-    private String publicationTitle;
-    private Float publicationPrice;
-
     private UUID recipientId;
     private String recipientImagePath;
     private String recipientNickname;
