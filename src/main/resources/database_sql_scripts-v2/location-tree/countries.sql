@@ -1,0 +1,1 @@
+INSERT INTO countries (country_id, value, value_ru, value_uz) VALUES ('15854ca1-064b-47cf-8491-11400c21f187','Uzbekistan','Узбекистан','O`zbekiston');
