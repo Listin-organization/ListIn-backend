@@ -36,6 +36,7 @@ public class UpdatePublicationRequestDTO {
 
     private Map<Boolean,String> videoUrl;
 
+    private List<ProductVariantResponseDTO> productVariants;
 
     private List<UpdatePublicationRequestDTO.AttributeValueDTO> attributeValues;
 

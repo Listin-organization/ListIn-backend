@@ -81,4 +81,6 @@ public class PublicationResponseDTO implements Serializable {
 
     private Integer totalComments;
 
+    private List<ProductVariantResponseDTO> productVariants;
+
 }

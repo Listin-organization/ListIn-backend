@@ -3,6 +3,7 @@ package com.igriss.ListIn.publication.mapper;
 
 import com.igriss.ListIn.location.dto.LocationDTO;
 import com.igriss.ListIn.location.mapper.LocationMapper;
+import com.igriss.ListIn.publication.dto.ProductVariantResponseDTO;
 import com.igriss.ListIn.publication.dto.PublicationRequestDTO;
 import com.igriss.ListIn.publication.dto.PublicationResponseDTO;
 import com.igriss.ListIn.publication.entity.NumericValue;
@@ -70,7 +71,7 @@ public class PublicationMapper {
                 .build();
     }
 
-    public PublicationResponseDTO toPublicationResponseDTO(Publication publication, List<PublicationImage> publicationImages, String publicationVideo, List<NumericValue> numericValues, Boolean liked, Boolean following) {
+    public PublicationResponseDTO toPublicationResponseDTO(Publication publication, List<PublicationImage> publicationImages, String publicationVideo, List<NumericValue> numericValues, Boolean liked, Boolean following, List<ProductVariantResponseDTO> productVariants) {
         return PublicationResponseDTO.builder()
                 .id(publication.getId())
                 .title(publication.getTitle())
@@ -100,6 +101,7 @@ public class PublicationMapper {
                 .latitude(publication.getLatitude())
                 .attributeValue(publicationAttributeValueMapper.toPublicationAttributeValueDTO(publication, numericValues))
                 .totalComments(publication.getCommentsCount())
+                .productVariants(productVariants)
                 .build();
     }
 }

@@ -63,6 +63,8 @@ public class PublicationRequestDTO implements Serializable {
 
     private String videoPreview;
 
+    private List<ProductVariantRequestDTO> productVariants;
+
     @NotEmpty(message = "At least an image is required")
     private List<String> imageUrls;
 

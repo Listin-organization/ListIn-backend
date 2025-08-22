@@ -4,16 +4,19 @@ import com.igriss.ListIn.exceptions.PublicationNotFoundException;
 import com.igriss.ListIn.exceptions.UnauthorizedAccessException;
 import com.igriss.ListIn.location.dto.LocationDTO;
 import com.igriss.ListIn.location.service.LocationService;
+import com.igriss.ListIn.publication.dto.ProductVariantResponseDTO;
 import com.igriss.ListIn.publication.dto.PublicationRequestDTO;
 import com.igriss.ListIn.publication.dto.PublicationResponseDTO;
 import com.igriss.ListIn.publication.dto.UpdatePublicationRequestDTO;
 import com.igriss.ListIn.publication.dto.page.PageResponse;
 import com.igriss.ListIn.publication.entity.NumericValue;
+import com.igriss.ListIn.publication.entity.ProductVariant;
 import com.igriss.ListIn.publication.entity.Publication;
 import com.igriss.ListIn.publication.entity.PublicationAttributeValue;
 import com.igriss.ListIn.publication.entity.PublicationImage;
 import com.igriss.ListIn.publication.entity.PublicationLike;
 import com.igriss.ListIn.publication.entity.PublicationVideo;
+import com.igriss.ListIn.publication.mapper.ProductVariantMapper;
 import com.igriss.ListIn.publication.mapper.PublicationMapper;
 import com.igriss.ListIn.publication.repository.PublicationRepository;
 import com.igriss.ListIn.publication.service.NumericValueService;
@@ -62,6 +65,7 @@ public class PublicationServiceImpl implements PublicationService {
     private final PublicationAttributeValueService publicationAttributeValueService;
     private final PublicationLikeService publicationLikeService;
     private final PublicationViewService publicationViewService;
+    private final ProductVariantService productVariantService;
 
     @Override
     @Transactional
@@ -84,6 +88,10 @@ public class PublicationServiceImpl implements PublicationService {
         // Save images //todo -> then removed the assignment
 
         productFileService.saveImages(request.getImageUrls(), publication);
+
+        Publication finalPublication1 = publication;
+        request.getProductVariants()
+                .forEach(product -> productVariantService.save(product, finalPublication1));
 
         // Save video if present
         Publication finalPublication = publication;
@@ -205,8 +213,9 @@ public class PublicationServiceImpl implements PublicationService {
         var publicationNumericFields = numericValueService.findNumericFields(publication.getId());
         var isLiked = publicationLikeService.isLiked(currentUser.getUserId(), publication.getId());
         var isFollowing = userService.isFollowingToUser(currentUser.getUserId(), publication.getId());
+        var publicationVariants = productVariantService.findByPublicationId(publicationId).stream().map(ProductVariantMapper::toResponse).toList();
 
-        return publicationMapper.toPublicationResponseDTO(publication, publicationImages, publicationVideoUrl, publicationNumericFields, isLiked, isFollowing);
+        return publicationMapper.toPublicationResponseDTO(publication, publicationImages, publicationVideoUrl, publicationNumericFields, isLiked, isFollowing, publicationVariants);
     }
 
     @Override
@@ -267,11 +276,14 @@ public class PublicationServiceImpl implements PublicationService {
 
         List<PublicationResponseDTO> publicationResponseDTOS = publicationPage.stream()
                 .map(publication -> {
+
+                            List<ProductVariantResponseDTO> variants = productVariantService.findByPublicationId(publication.getId()).stream().map(ProductVariantMapper::toResponse).toList();
                             PublicationResponseDTO publicationResponseDTO = publicationMapper.toPublicationResponseDTO(publication,
                                     productFileService.findImagesByPublicationId(publication.getId()),
                                     productFileService.findVideoUrlByPublicationId(publication.getId()),
                                     numericValueService.findNumericFields(publication.getId()),
-                                    true, userService.isFollowingToUser(user.getUserId(), publication.getSeller().getUserId()));
+                                    true, userService.isFollowingToUser(user.getUserId(), publication.getSeller().getUserId()),
+                                    variants);
 
                             publicationResponseDTO.setViews(publicationViewService.views(publication.getId()));
 
@@ -340,6 +352,8 @@ public class PublicationServiceImpl implements PublicationService {
 
         publicationDocumentService.updateInPublicationDocument(publicationId, updatePublication);
 
+        var variants = updatePublication.getProductVariants().stream().map(variant -> ProductVariantMapper.toResponse(productVariantService.update(variant.getId(), variant, publication))).toList();
+
 
         Publication updatedPublication = publicationRepository.findById(publicationId)
                 .orElseThrow(() -> new PublicationNotFoundException(String.format("Publication with id [%s] does not exist!", publicationId)));
@@ -348,14 +362,16 @@ public class PublicationServiceImpl implements PublicationService {
 
         String videoUrl = productFileService.findVideoUrlByPublicationId(updatedPublication.getId());
 
+
         PublicationResponseDTO publicationResponseDTO = publicationMapper.toPublicationResponseDTO(
                 updatedPublication, images, videoUrl, numericValueService.findNumericFields(publication.getId()),
-                false, userService.isFollowingToUser(connectedUser.getUserId(), publication.getSeller().getUserId())
+                false, userService.isFollowingToUser(connectedUser.getUserId(), publication.getSeller().getUserId()), variants
         );
 
         publicationResponseDTO.setViews(publicationViewService.views(publication.getId()));
 
         publicationResponseDTO.setIsViewed(publicationViewService.isViewed(connectedUser.getUserId(), publication.getId()));
+        publicationResponseDTO.setProductVariants(variants);
 
         return publicationResponseDTO;
     }
@@ -398,13 +414,16 @@ public class PublicationServiceImpl implements PublicationService {
         return publicationPage.stream()
                 .map(publication -> {
 
+                            var variants = productVariantService.findByPublicationId(publication.getId()).stream().map(ProductVariantMapper::toResponse).toList();
+
                             PublicationResponseDTO publicationResponseDTO = publicationMapper.toPublicationResponseDTO(publication,
 
                                     productFileService.findImagesByPublicationId(publication.getId()),
                                     productFileService.findVideoUrlByPublicationId(publication.getId()),
                                     numericValueService.findNumericFields(publication.getId()),
                                     publicationLikeService.isLiked(user.getUserId(), publication.getId()),
-                                    userService.isFollowingToUser(user.getUserId(), publication.getSeller().getUserId()));
+                                    userService.isFollowingToUser(user.getUserId(), publication.getSeller().getUserId()),
+                                    variants);
 
                             publicationResponseDTO.setViews(publicationViewService.views(publication.getId()));
 
