@@ -90,8 +90,10 @@ public class PublicationServiceImpl implements PublicationService {
         productFileService.saveImages(request.getImageUrls(), publication);
 
         Publication finalPublication1 = publication;
-        request.getProductVariants()
-                .forEach(product -> productVariantService.save(product, finalPublication1));
+        if (request.getProductVariants()!=null && !request.getProductVariants().isEmpty()) {
+            request.getProductVariants()
+                    .forEach(product -> productVariantService.save(product, finalPublication1));
+        }
 
         // Save video if present
         Publication finalPublication = publication;

@@ -187,7 +187,6 @@ public class PublicationSearchServiceImpl implements PublicationSearchService {
     }
 
 
-
     @Override
     public List<String> getLastQueriedValues(Authentication connectedUser) {
         User user = (User) connectedUser.getPrincipal();
@@ -283,7 +282,9 @@ public class PublicationSearchServiceImpl implements PublicationSearchService {
                 productFileService.findVideoUrlByPublicationId(publication.getId()),
                 numericValueService.findNumericFields(publication.getId()),
                 publicationLikeService.isLiked(user.getUserId(), publication.getId()),
-                userService.isFollowingToUser(user.getUserId(), publication.getSeller().getUserId()));
+                userService.isFollowingToUser(user.getUserId(), publication.getSeller().getUserId()),
+                null
+        );
 
         publicationResponseDTO.setViews(publicationViewService.views(publication.getId()));
         publicationResponseDTO.setIsViewed(publicationViewService.isViewed(user.getUserId(), publication.getId()));
