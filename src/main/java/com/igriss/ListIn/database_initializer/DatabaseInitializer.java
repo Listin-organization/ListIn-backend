@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-//@Component
+@Component
 @RequiredArgsConstructor
 public class DatabaseInitializer {
 
@@ -96,10 +96,10 @@ public class DatabaseInitializer {
 //            "/database_sql_scripts/numerics/real_estate_numeric_fields.sql",
 
 
-//            "/database_sql_scripts-v2/categories2.sql",
-//            "/database_sql_scripts-v2/location-tree/countries.sql",
-//            "/database_sql_scripts-v2/location-tree/states.sql",
-//            "/database_sql_scripts-v2/location-tree/counties.sql"
+            "/database_sql_scripts-v2/categories2.sql",
+            "/database_sql_scripts-v2/location-tree/countries.sql",
+            "/database_sql_scripts-v2/location-tree/states.sql",
+            "/database_sql_scripts-v2/location-tree/counties.sql"
     );
 
 //    @PostConstruct //todo -> to be removed before next use
@@ -119,40 +119,40 @@ public class DatabaseInitializer {
 //    }
 
 
-//    @PostConstruct
-//    public void init() {
-//        clearDatabase();
-//        for (String script : scripts) {
-//            executeScript(script);
-//        }
-//
-//        LocationDTO locationDTO = locationService.getLocation("Узбекистан", "Ташкент", "Яккасарай", "ru");
-//        userRepository.saveAll(
-//                List.of(
-//                        User.builder().nickName("Davron").enableCalling(true).phoneNumber("+998 90 000 00 09").email("d.no_replay@listin.uz").biography("Admin")
-//                                .password(passwordEncoder.encode("string")).role(Role.ADMIN).isGrantedForPreciseLocation(true)
-//                                .country(locationDTO.getCountry())
-//                                .county(locationDTO.getCounty())
-//                                .country(locationDTO.getCountry())
-//                                .state(locationDTO.getState())
-//                                .locationName("Tashkent").longitude(1234.1234).latitude(-43.234234).build(),
-//                        User.builder().nickName("Qobil").enableCalling(true).phoneNumber("+998 90 000 00 09").email("q.no_replay@listin.uz").biography("Admin")
-//                                .password(passwordEncoder.encode("string")).role(Role.ADMIN).isGrantedForPreciseLocation(true).locationName("Tashkent")
-//                                .country(locationDTO.getCountry())
-//                                .county(locationDTO.getCounty())
-//                                .state(locationDTO.getState())
-//                                .country(locationDTO.getCountry())
-//                                .longitude(1234.1234).latitude(-43.234234).build(),
-//                        User.builder().nickName("Abdulaxad").enableCalling(true).phoneNumber("+998 90 000 00 09").email("a.no_replay@listin.uz").biography("Admin")
-//                                .password(passwordEncoder.encode("string")).role(Role.ADMIN).isGrantedForPreciseLocation(true).locationName("Tashkent")
-//                                .country(locationDTO.getCountry())
-//                                .county(locationDTO.getCounty())
-//                                .state(locationDTO.getState())
-//                                .country(locationDTO.getCountry())
-//                                .longitude(1234.1234).latitude(-43.234234).build()
-//                )
-//        );
-//    }
+    @PostConstruct
+    public void init() {
+        clearDatabase();
+        for (String script : scripts) {
+            executeScript(script);
+        }
+
+        LocationDTO locationDTO = locationService.getLocation("Узбекистан", "Ташкент", "Яккасарай", "ru");
+        userRepository.saveAll(
+                List.of(
+                        User.builder().nickName("Davron").enableCalling(true).phoneNumber("+998 90 000 00 09").email("d.no_replay@listin.uz").biography("Admin")
+                                .password(passwordEncoder.encode("string")).role(Role.ADMIN).isGrantedForPreciseLocation(true)
+                                .country(locationDTO.getCountry())
+                                .county(locationDTO.getCounty())
+                                .country(locationDTO.getCountry())
+                                .state(locationDTO.getState())
+                                .locationName("Tashkent").longitude(1234.1234).latitude(-43.234234).build(),
+                        User.builder().nickName("Qobil").enableCalling(true).phoneNumber("+998 90 000 00 09").email("q.no_replay@listin.uz").biography("Admin")
+                                .password(passwordEncoder.encode("string")).role(Role.ADMIN).isGrantedForPreciseLocation(true).locationName("Tashkent")
+                                .country(locationDTO.getCountry())
+                                .county(locationDTO.getCounty())
+                                .state(locationDTO.getState())
+                                .country(locationDTO.getCountry())
+                                .longitude(1234.1234).latitude(-43.234234).build(),
+                        User.builder().nickName("Abdulaxad").enableCalling(true).phoneNumber("+998 90 000 00 09").email("a.no_replay@listin.uz").biography("Admin")
+                                .password(passwordEncoder.encode("string")).role(Role.ADMIN).isGrantedForPreciseLocation(true).locationName("Tashkent")
+                                .country(locationDTO.getCountry())
+                                .county(locationDTO.getCounty())
+                                .state(locationDTO.getState())
+                                .country(locationDTO.getCountry())
+                                .longitude(1234.1234).latitude(-43.234234).build()
+                )
+        );
+    }
 
     private void clearDatabase() {
         try {
