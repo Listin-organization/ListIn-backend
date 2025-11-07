@@ -1,1 +1,1 @@
-# Build Status Badge: ![](https://github.com/Dav0407/ListIn/workflows/ListIn-Actions/badge.svg)
+# Build Status Badge: ![](https://github.com/Listin-organization/ListIn-backend/workflows/ListIn-Actions/badge.svg)
