@@ -7,8 +7,10 @@ import com.igriss.ListIn.location.dto.StateDTO;
 import com.igriss.ListIn.security.roles.Role;
 import com.igriss.ListIn.user.enums.Status;
 import jakarta.persistence.Column;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -18,6 +20,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 //todo -> add a jakarta validation to each field
 public class UserResponseDTO {
 

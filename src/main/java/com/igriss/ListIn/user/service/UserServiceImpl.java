@@ -1,6 +1,7 @@
 package com.igriss.ListIn.user.service;
 
 
+import com.igriss.ListIn.exceptions.BadRequestException;
 import com.igriss.ListIn.exceptions.UserNotFoundException;
 import com.igriss.ListIn.location.dto.LocationDTO;
 import com.igriss.ListIn.location.service.LocationService;
@@ -24,7 +25,6 @@ import com.igriss.ListIn.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -136,8 +136,12 @@ public class UserServiceImpl implements UserService {
         User updatedUser = userRepository.getUserByUserId(user.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if (status != 0) log.info("User updated: {}", user);
-        else log.info("User update failed: {}", user);
+        if (status != 0) {
+            log.info("User updated: {}", user);
+        }
+        else {
+            log.info("User update failed: {}", user);
+        }
 
         return UpdateResponseDTO.builder()
                 .tokens(
