@@ -4,10 +4,8 @@ import com.igriss.ListIn.publication.dto.PublicationRequestDTO;
 import com.igriss.ListIn.publication.dto.PublicationResponseDTO;
 import com.igriss.ListIn.publication.dto.UpdatePublicationRequestDTO;
 import com.igriss.ListIn.publication.dto.page.PageResponse;
-import com.igriss.ListIn.publication.entity.Publication;
 import com.igriss.ListIn.publication.entity.PublicationAttributeValue;
 import com.igriss.ListIn.publication.repository.PublicationAttributeValueRepository;
-import com.igriss.ListIn.publication.repository.PublicationRepository;
 import com.igriss.ListIn.publication.service.PublicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
