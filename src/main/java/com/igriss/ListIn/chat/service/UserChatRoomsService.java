@@ -1,4 +1,4 @@
-qpackage com.igriss.ListIn.chat.service;
+package com.igriss.ListIn.chat.service;
 
 import com.igriss.ListIn.chat.dto.ChatRoomResponseDTO;
 import com.igriss.ListIn.chat.entity.ChatRoom;
