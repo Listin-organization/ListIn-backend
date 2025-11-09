@@ -5,6 +5,7 @@ import com.igriss.ListIn.comment.dto.CommentResponseDTO;
 import com.igriss.ListIn.comment.entity.Comment;
 import com.igriss.ListIn.comment.repository.CommentRepository;
 import com.igriss.ListIn.comment.service.impl.CommentServiceImpl;
+import com.igriss.ListIn.publication.dto.page.PageResponse;
 import com.igriss.ListIn.publication.entity.Publication;
 import com.igriss.ListIn.publication.service.PublicationService;
 import com.igriss.ListIn.user.entity.User;
@@ -15,14 +16,21 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -141,4 +149,56 @@ class CommentServiceImplTest {
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage("Parent comment not found");
     }
+
+    @Test
+    void getCommentsForPublication_returnsPageResponse() {
+        UUID publicationId = UUID.randomUUID();
+        Publication publication = Publication.builder()
+                .id(publicationId)
+                .build();
+        when(publicationService.getByIdAsEntity(publicationId)).thenReturn(publication);
+
+        Comment comment1 = Comment.builder().id(UUID.randomUUID()).content("Comment 1").author(author).build();
+        Comment comment2 = Comment.builder().id(UUID.randomUUID()).content("Comment 2").author(author).build();
+
+        Pageable pageable = PageRequest.of(0, 2, Sort.by("createdAt").descending());
+        Page<Comment> commentPage = new PageImpl<>(List.of(comment1, comment2), pageable, 2);
+        when(commentRepository.findByPublicationAndParentIsNull(publication, pageable))
+                .thenReturn(commentPage);
+
+        PageResponse<CommentResponseDTO> response = commentService.getCommentsForPublication(0, 2, publicationId);
+
+        assertThat(response.getContent()).hasSize(2);
+        assertThat(response.getTotalElements()).isEqualTo(2);
+        assertThat(response.getNumber()).isEqualTo(0);
+        assertThat(response.getSize()).isEqualTo(2);
+        assertThat(response.isFirst()).isTrue();
+        assertThat(response.isLast()).isTrue();
+
+        verify(commentRepository, times(1)).findByPublicationAndParentIsNull(publication, pageable);
+    }
+
+    @Test
+    void getReplies_returnsPageResponse() {
+        UUID parentCommentId = UUID.randomUUID();
+
+        Comment reply1 = Comment.builder().id(UUID.randomUUID()).content("Reply 1").author(author).build();
+        Comment reply2 = Comment.builder().id(UUID.randomUUID()).content("Reply 2").author(author).build();
+
+        Pageable pageable = PageRequest.of(0, 2, Sort.by("createdAt").descending());
+        Page<Comment> replyPage = new PageImpl<>(List.of(reply1, reply2), pageable, 2);
+        when(commentRepository.findByParent_id(parentCommentId, pageable)).thenReturn(replyPage);
+
+        PageResponse<CommentResponseDTO> response = commentService.getReplies(0, 2, parentCommentId);
+
+        assertThat(response.getContent()).hasSize(2);
+        assertThat(response.getTotalElements()).isEqualTo(2);
+        assertThat(response.getNumber()).isEqualTo(0);
+        assertThat(response.getSize()).isEqualTo(2);
+        assertThat(response.isFirst()).isTrue();
+        assertThat(response.isLast()).isTrue();
+
+        verify(commentRepository, times(1)).findByParent_id(parentCommentId, pageable);
+    }
+
 }

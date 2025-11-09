@@ -15,7 +15,7 @@ import com.igriss.ListIn.publication.service.PublicationLikeService;
 import com.igriss.ListIn.publication.service.PublicationViewService;
 import com.igriss.ListIn.search.document.PublicationDocument;
 import com.igriss.ListIn.search.dto.FoundPublicationsDTO;
-import com.igriss.ListIn.search.repository.SearchParamMapper;
+import com.igriss.ListIn.search.mapper.SearchParamMapper;
 import com.igriss.ListIn.search.service.supplier.QueryRepository;
 import com.igriss.ListIn.search.service.supplier.SearchParams;
 import com.igriss.ListIn.user.entity.User;

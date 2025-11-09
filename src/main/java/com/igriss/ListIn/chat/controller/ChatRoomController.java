@@ -1,6 +1,7 @@
 package com.igriss.ListIn.chat.controller;
 
 import com.igriss.ListIn.chat.dto.ChatRoomResponseDTO;
+import com.igriss.ListIn.chat.service.UserChatRoomsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

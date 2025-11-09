@@ -1,11 +1,10 @@
-package com.igriss.ListIn.chat.controller;
+qpackage com.igriss.ListIn.chat.service;
 
 import com.igriss.ListIn.chat.dto.ChatRoomResponseDTO;
 import com.igriss.ListIn.chat.entity.ChatRoom;
 import com.igriss.ListIn.chat.mapper.ChatMessageMapper;
 import com.igriss.ListIn.chat.mapper.ChatRoomMapper;
 import com.igriss.ListIn.chat.repository.ChatRoomRepository;
-import com.igriss.ListIn.chat.service.ChatMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

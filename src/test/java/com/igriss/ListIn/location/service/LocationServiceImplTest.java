@@ -22,10 +22,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class LocationServiceImplTest {
@@ -119,5 +123,67 @@ class LocationServiceImplTest {
         assertNull(location.getCountry());
         assertNull(location.getState());
         assertNull(location.getCounty());
+    }
+
+    @Test
+    void getLocation_ruLanguage_returnsEntities() {
+        Country country = Country.builder().id(UUID.randomUUID()).valueRu("Россия").build();
+        State state = State.builder().id(UUID.randomUUID()).valueRu("Москва").build();
+        County county = County.builder().id(UUID.randomUUID()).valueRu("ЦАО").build();
+
+        when(countryRepository.findByValueRuIgnoreCase("Россия")).thenReturn(Optional.of(country));
+        when(stateRepository.findByValueRuIgnoreCase("Москва")).thenReturn(Optional.of(state));
+        when(countyRepository.findByValueRuIgnoreCase("ЦАО")).thenReturn(Optional.of(county));
+
+        LocationDTO dto = locationService.getLocation("Россия", "Москва", "ЦАО", "ru");
+
+        assertThat(dto).isNotNull();
+        assertThat(dto.getCountry()).isEqualTo(country);
+        assertThat(dto.getState()).isEqualTo(state);
+        assertThat(dto.getCounty()).isEqualTo(county);
+
+        verify(countryRepository, times(1)).findByValueRuIgnoreCase("Россия");
+        verify(stateRepository, times(1)).findByValueRuIgnoreCase("Москва");
+        verify(countyRepository, times(1)).findByValueRuIgnoreCase("ЦАО");
+    }
+
+    @Test
+    void getLocation_ruLanguage_entityNotFound_throwsResourceNotFoundException() {
+        when(countryRepository.findByValueRuIgnoreCase("Неизвестно")).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> locationService.getLocation("Неизвестно", null, null, "ru"));
+
+        verify(countryRepository, times(1)).findByValueRuIgnoreCase("Неизвестно");
+    }
+
+    @Test
+    void getLocation_languageOtherThanUzOrRu_usesDefaultFinder() {
+        Country country = Country.builder().id(UUID.randomUUID()).value("USA").build();
+        when(countryRepository.findByValueIgnoreCase("USA")).thenReturn(Optional.of(country));
+
+        LocationDTO dto = locationService.getLocation("USA", null, null, "en");
+
+        assertThat(dto.getCountry()).isEqualTo(country);
+        verify(countryRepository, times(1)).findByValueIgnoreCase("USA");
+    }
+
+    @Test
+    void getLocation_nullOrBlankName_returnsNull() {
+        LocationDTO dto = locationService.getLocation(null, "", "  ", "ru");
+        assertThat(dto.getCountry()).isNull();
+        assertThat(dto.getState()).isNull();
+        assertThat(dto.getCounty()).isNull();
+    }
+
+    @Test
+    void getLocationTree_returnsLocationTreeNode() {
+        when(countryRepository.findAll()).thenReturn(java.util.List.of());
+        when(stateRepository.findAllByCountry_Id(any())).thenReturn(java.util.List.of());
+        when(countyRepository.findAllByState_Id(any())).thenReturn(java.util.List.of());
+
+        LocationTreeNode treeNode = locationService.getLocationTree();
+        assertThat(treeNode).isNotNull();
+        assertThat(treeNode.getCountries()).isEmpty();
     }
 }
