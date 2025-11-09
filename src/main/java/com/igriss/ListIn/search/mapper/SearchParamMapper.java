@@ -1,4 +1,4 @@
-package com.igriss.ListIn.search.repository;
+package com.igriss.ListIn.search.mapper;
 
 import com.igriss.ListIn.search.service.supplier.SearchParams;
 import org.springframework.stereotype.Service;

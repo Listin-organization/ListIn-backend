@@ -51,6 +51,10 @@ public class PublicationResponseDTO implements Serializable {
 
     private Long views;
 
+    private Double aspectRation;
+
+    private String videoPreview;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
@@ -74,5 +78,9 @@ public class PublicationResponseDTO implements Serializable {
     private Double longitude;
 
     private PublicationAttributeValueDTO attributeValue;
+
+    private Integer totalComments;
+
+    private List<ProductVariantResponseDTO> productVariants;
 
 }

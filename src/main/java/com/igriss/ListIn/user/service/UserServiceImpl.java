@@ -1,6 +1,7 @@
 package com.igriss.ListIn.user.service;
 
 
+import com.igriss.ListIn.exceptions.BadRequestException;
 import com.igriss.ListIn.exceptions.UserNotFoundException;
 import com.igriss.ListIn.location.dto.LocationDTO;
 import com.igriss.ListIn.location.service.LocationService;
@@ -24,7 +25,6 @@ import com.igriss.ListIn.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean existsByEmail(String email) {
-       return userRepository.existsByEmail(email);
+        return userRepository.existsByEmail(email);
     }
 
     @Override // todo -> will be fixed the logical bug
@@ -117,11 +117,12 @@ public class UserServiceImpl implements UserService {
                 user.getUserId(),
                 userRequestDTO.getNickName(),
                 userRequestDTO.getProfileImagePath(),
+                userRequestDTO.getBackgroundImagePath(),
                 userRequestDTO.getPhoneNumber(),
                 userRequestDTO.getIsGrantedForPreciseLocation(),
                 userRequestDTO.getLocationName(),
-                location.getCountry().getId(),
-                location.getState().getId(),
+                location.getCountry() != null ? location.getCountry().getId() : null,
+                location.getState() != null ? location.getState().getId() : null,
                 location.getCounty() != null ? location.getCounty().getId() : null,
                 userRequestDTO.getLongitude(),
                 userRequestDTO.getLatitude(),
@@ -135,8 +136,12 @@ public class UserServiceImpl implements UserService {
         User updatedUser = userRepository.getUserByUserId(user.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if (status != 0) log.info("User updated: {}", user);
-        else log.info("User update failed: {}", user);
+        if (status != 0) {
+            log.info("User updated: {}", user);
+        }
+        else {
+            log.info("User update failed: {}", user);
+        }
 
         return UpdateResponseDTO.builder()
                 .tokens(
@@ -161,6 +166,11 @@ public class UserServiceImpl implements UserService {
         Page<FollowsDTO> allFollowings = userFollowerRepository.findAllFollowings(userId, PageRequest.of(page, size));
 
         return getFollowsDTOPageResponse(userId, allFollowings);
+    }
+
+    @Override
+    public List<UUID> getFollowings(UUID userId) {
+        return userFollowerRepository.findFollowings(userId);
     }
 
 
@@ -247,6 +257,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findUserByEmail(String username) {
         return userRepository.findByEmail(username);
+    }
+
+    @Override
+    public PageResponse<FollowsResponseDTO> getRecommendedUsers(Authentication connectedUser, int page, int size) {
+        User currentUser = (User) connectedUser.getPrincipal();
+        Page<FollowsDTO> recommendedUsers = userRepository.findRecommendedUsers(currentUser.getUserId(), PageRequest.of(page, size));
+
+        return getFollowsDTOPageResponse(currentUser.getUserId(), recommendedUsers);
     }
 
     @Override

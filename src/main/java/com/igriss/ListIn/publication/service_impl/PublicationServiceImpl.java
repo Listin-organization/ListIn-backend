@@ -2,20 +2,21 @@ package com.igriss.ListIn.publication.service_impl;
 
 import com.igriss.ListIn.exceptions.PublicationNotFoundException;
 import com.igriss.ListIn.exceptions.UnauthorizedAccessException;
-
 import com.igriss.ListIn.location.dto.LocationDTO;
 import com.igriss.ListIn.location.service.LocationService;
-
+import com.igriss.ListIn.publication.dto.ProductVariantResponseDTO;
 import com.igriss.ListIn.publication.dto.PublicationRequestDTO;
 import com.igriss.ListIn.publication.dto.PublicationResponseDTO;
 import com.igriss.ListIn.publication.dto.UpdatePublicationRequestDTO;
 import com.igriss.ListIn.publication.dto.page.PageResponse;
 import com.igriss.ListIn.publication.entity.NumericValue;
+import com.igriss.ListIn.publication.entity.ProductVariant;
 import com.igriss.ListIn.publication.entity.Publication;
 import com.igriss.ListIn.publication.entity.PublicationAttributeValue;
 import com.igriss.ListIn.publication.entity.PublicationImage;
 import com.igriss.ListIn.publication.entity.PublicationLike;
 import com.igriss.ListIn.publication.entity.PublicationVideo;
+import com.igriss.ListIn.publication.mapper.ProductVariantMapper;
 import com.igriss.ListIn.publication.mapper.PublicationMapper;
 import com.igriss.ListIn.publication.repository.PublicationRepository;
 import com.igriss.ListIn.publication.service.NumericValueService;
@@ -64,6 +65,7 @@ public class PublicationServiceImpl implements PublicationService {
     private final PublicationAttributeValueService publicationAttributeValueService;
     private final PublicationLikeService publicationLikeService;
     private final PublicationViewService publicationViewService;
+    private final ProductVariantService productVariantService;
 
     @Override
     @Transactional
@@ -86,6 +88,12 @@ public class PublicationServiceImpl implements PublicationService {
         // Save images //todo -> then removed the assignment
 
         productFileService.saveImages(request.getImageUrls(), publication);
+
+        Publication finalPublication1 = publication;
+        if (request.getProductVariants()!=null && !request.getProductVariants().isEmpty()) {
+            request.getProductVariants()
+                    .forEach(product -> productVariantService.save(product, finalPublication1));
+        }
 
         // Save video if present
         Publication finalPublication = publication;
@@ -115,7 +123,7 @@ public class PublicationServiceImpl implements PublicationService {
 
         List<PublicationResponseDTO> publicationsDTOList = getPublicationResponseDTOS(publicationPage, user);
 
-        return getPageResponse(publicationPage,publicationsDTOList);
+        return getPageResponse(publicationPage, publicationsDTOList);
     }
 
     @Override
@@ -195,9 +203,64 @@ public class PublicationServiceImpl implements PublicationService {
     }
 
     @Override
-    public Publication getById(UUID publicationId) {
-        return publicationRepository.findById(publicationId)
+    public PublicationResponseDTO getById(UUID publicationId, Authentication connectedUser) {
+
+        User currentUser = (User) connectedUser.getPrincipal();
+
+        Publication publication = publicationRepository.findById(publicationId)
                 .orElseThrow(() -> new PublicationNotFoundException("No such Publication found with ID: " + publicationId));
+
+        var publicationImages = productFileService.findImagesByPublicationId(publication.getId());
+        var publicationVideoUrl = productFileService.findVideoUrlByPublicationId(publication.getId());
+        var publicationNumericFields = numericValueService.findNumericFields(publication.getId());
+        var isLiked = publicationLikeService.isLiked(currentUser.getUserId(), publication.getId());
+        var isFollowing = userService.isFollowingToUser(currentUser.getUserId(), publication.getId());
+        var publicationVariants = productVariantService.findByPublicationId(publicationId).stream().map(ProductVariantMapper::toResponse).toList();
+
+        return publicationMapper.toPublicationResponseDTO(publication, publicationImages, publicationVideoUrl, publicationNumericFields, isLiked, isFollowing, publicationVariants);
+    }
+
+    @Override
+    public Publication getByIdAsEntity(UUID publicationId) {
+        return publicationRepository.findById(publicationId).orElseThrow(() -> new PublicationNotFoundException("No such Publication found with ID: " + publicationId));
+    }
+
+    @Override
+    public PageResponse<PublicationResponseDTO> getFollowingsPublications(int page, int size, Authentication connectedUser) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("datePosted").descending());
+
+        User user = (User) connectedUser.getPrincipal();
+
+        List<UUID> followingIds = userService.getFollowings(user.getUserId());
+
+        Page<Publication> publications = publicationRepository.findBySeller_UserIdInOrderByDatePostedDesc(followingIds, pageable);
+
+        List<PublicationResponseDTO> publicationResponseDTOS = getPublicationResponseDTOS(publications, user);
+
+        return getPageResponse(publications, publicationResponseDTOS);
+    }
+
+    @Override
+    public PageResponse<PublicationResponseDTO> getVideoPublications(int page, int size, String userId, Authentication connectedUser) {
+        User user = (User) connectedUser.getPrincipal();
+        Page<Publication> publicationsContainingVideos =
+                publicationRepository.findPublicationsContainingVideos(userId != null ? UUID.fromString(userId) : user.getUserId(), PageRequest.of(page, size));
+
+        List<PublicationResponseDTO> publicationResponseDTOS = getPublicationResponseDTOS(publicationsContainingVideos, user);
+
+        return getPageResponse(publicationsContainingVideos, publicationResponseDTOS);
+    }
+
+    @Override
+    public PageResponse<PublicationResponseDTO> getPhotoPublications(int page, int size, String userId, Authentication connectedUser) {
+        User user = (User) connectedUser.getPrincipal();
+        Page<Publication> publicationsContainingVideos =
+                publicationRepository.findPublicationsWithoutVideos(userId != null ? UUID.fromString(userId) : user.getUserId(), PageRequest.of(page, size));
+
+        List<PublicationResponseDTO> publicationResponseDTOS = getPublicationResponseDTOS(publicationsContainingVideos, user);
+
+        return getPageResponse(publicationsContainingVideos, publicationResponseDTOS);
     }
 
     @Override
@@ -207,19 +270,22 @@ public class PublicationServiceImpl implements PublicationService {
         Page<PublicationLike> likedPublications = publicationLikeService.getLikedPublications(user, PageRequest.of(page, size));
 
         Page<Publication> publicationPage = likedPublications.map(publicationLike ->
-                        publicationRepository.findById(publicationLike.getPublication().getId()).orElseThrow(() -> new PublicationNotFoundException(
-                                String.format("Publication with ID '%s' not found", publicationLike.getPublication().getId()))
-                        )
+                publicationRepository.findById(publicationLike.getPublication().getId()).orElseThrow(() -> new PublicationNotFoundException(
+                        String.format("Publication with ID '%s' not found", publicationLike.getPublication().getId()))
+                )
 
-                );
+        );
 
         List<PublicationResponseDTO> publicationResponseDTOS = publicationPage.stream()
                 .map(publication -> {
+
+                            List<ProductVariantResponseDTO> variants = productVariantService.findByPublicationId(publication.getId()).stream().map(ProductVariantMapper::toResponse).toList();
                             PublicationResponseDTO publicationResponseDTO = publicationMapper.toPublicationResponseDTO(publication,
                                     productFileService.findImagesByPublicationId(publication.getId()),
                                     productFileService.findVideoUrlByPublicationId(publication.getId()),
                                     numericValueService.findNumericFields(publication.getId()),
-                                    true, userService.isFollowingToUser(user.getUserId(), publication.getSeller().getUserId()));
+                                    true, userService.isFollowingToUser(user.getUserId(), publication.getSeller().getUserId()),
+                                    variants);
 
                             publicationResponseDTO.setViews(publicationViewService.views(publication.getId()));
 
@@ -268,7 +334,9 @@ public class PublicationServiceImpl implements PublicationService {
                 updatePublication.getDescription(),
                 updatePublication.getPrice(),
                 updatePublication.getBargain(),
-                updatePublication.getProductCondition()
+                updatePublication.getProductCondition(),
+                updatePublication.getAspectRation(),
+                updatePublication.getVideoPreview()
         );
 
         if (isUpdatedPublication != 0) {
@@ -286,6 +354,8 @@ public class PublicationServiceImpl implements PublicationService {
 
         publicationDocumentService.updateInPublicationDocument(publicationId, updatePublication);
 
+        var variants = updatePublication.getProductVariants().stream().map(variant -> ProductVariantMapper.toResponse(productVariantService.update(variant.getId(), variant, publication))).toList();
+
 
         Publication updatedPublication = publicationRepository.findById(publicationId)
                 .orElseThrow(() -> new PublicationNotFoundException(String.format("Publication with id [%s] does not exist!", publicationId)));
@@ -294,42 +364,38 @@ public class PublicationServiceImpl implements PublicationService {
 
         String videoUrl = productFileService.findVideoUrlByPublicationId(updatedPublication.getId());
 
+
         PublicationResponseDTO publicationResponseDTO = publicationMapper.toPublicationResponseDTO(
                 updatedPublication, images, videoUrl, numericValueService.findNumericFields(publication.getId()),
-                false, userService.isFollowingToUser(connectedUser.getUserId(), publication.getSeller().getUserId())
+                false, userService.isFollowingToUser(connectedUser.getUserId(), publication.getSeller().getUserId()), variants
         );
 
         publicationResponseDTO.setViews(publicationViewService.views(publication.getId()));
 
         publicationResponseDTO.setIsViewed(publicationViewService.isViewed(connectedUser.getUserId(), publication.getId()));
+        publicationResponseDTO.setProductVariants(variants);
 
         return publicationResponseDTO;
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<Object> deletePublication(UUID publicationId, Authentication authentication) {
 
         return publicationRepository.findById(publicationId).map(publication -> {
 
-            publicationRepository.deleteById(publicationId);
-
             publicationAttributeValueService.deletePublicationAttributes(publicationId);
-
             productFileService.deletePublicationFiles(publicationId);
-
             publicationDocumentService.deleteById(publicationId);
-
             numericValueService.deletePublicationNumericFields(publicationId);
-
             publicationLikeService.deletePublicationLikes(publicationId);
-
             publicationViewService.deletePublicationViews(publicationId);
+
+            publicationRepository.deleteById(publicationId);
 
             return ResponseEntity.noContent().build();
 
         }).orElse(ResponseEntity.notFound().build());
-
     }
 
     @NotNull
@@ -350,13 +416,16 @@ public class PublicationServiceImpl implements PublicationService {
         return publicationPage.stream()
                 .map(publication -> {
 
+                            var variants = productVariantService.findByPublicationId(publication.getId()).stream().map(ProductVariantMapper::toResponse).toList();
+
                             PublicationResponseDTO publicationResponseDTO = publicationMapper.toPublicationResponseDTO(publication,
 
                                     productFileService.findImagesByPublicationId(publication.getId()),
                                     productFileService.findVideoUrlByPublicationId(publication.getId()),
                                     numericValueService.findNumericFields(publication.getId()),
                                     publicationLikeService.isLiked(user.getUserId(), publication.getId()),
-                                    userService.isFollowingToUser(user.getUserId(), publication.getSeller().getUserId()));
+                                    userService.isFollowingToUser(user.getUserId(), publication.getSeller().getUserId()),
+                                    variants);
 
                             publicationResponseDTO.setViews(publicationViewService.views(publication.getId()));
 

@@ -1,6 +1,7 @@
 package com.igriss.ListIn.publication.service_impl;
 
 import com.igriss.ListIn.config.Images.S3Service;
+import com.igriss.ListIn.exceptions.InvalidUrlException;
 import com.igriss.ListIn.publication.entity.PublicationImage;
 import com.igriss.ListIn.publication.entity.Publication;
 import com.igriss.ListIn.publication.entity.PublicationVideo;
@@ -138,6 +139,7 @@ public class ProductFileServiceImpl implements ProductFileService {
             s3Service.deleteFiles(Collections.singletonList(fileName));
         } catch (MalformedURLException e) {
             log.error("Invalid video URL format: {}", url);
+            throw new InvalidUrlException("Provided invalid url");
         }
     }
 

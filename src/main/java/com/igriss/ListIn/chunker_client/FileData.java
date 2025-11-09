@@ -1,4 +1,4 @@
-package com.igriss.ListIn.config.Images;
+package com.igriss.ListIn.chunker_client;
 
 
 import lombok.*;
@@ -15,7 +15,7 @@ import java.io.InputStream;
 @Slf4j
 @Builder
 @AllArgsConstructor
-public class CompressedMultipartFile implements MultipartFile {
+public class FileData implements MultipartFile {
     private final String name;
     private final String originalFilename;
     private final String contentType;
@@ -52,6 +52,8 @@ public class CompressedMultipartFile implements MultipartFile {
     public byte[] getBytes() throws IOException {
         return content;
     }
+
+
 
     @Override
     @NonNull

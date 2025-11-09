@@ -43,6 +43,8 @@ public interface UserService {
 
     PageResponse<FollowsResponseDTO> getFollowings(UUID userId, int page, int size);
 
+    List<UUID> getFollowings(UUID userId);
+
     UserResponseDTO followToUser(UUID followingUserId, Authentication authentication) throws BadRequestException;
 
     UserResponseDTO unFollowFromUser(UUID followedUserId, Authentication authentication) throws BadRequestException;
@@ -56,4 +58,6 @@ public interface UserService {
     List<WSUserResponseDTO> findConnectedUsers();
 
     Optional<User> findUserByEmail(String email);
+
+    PageResponse<FollowsResponseDTO> getRecommendedUsers(Authentication connectedUser, int page, int size);
 }

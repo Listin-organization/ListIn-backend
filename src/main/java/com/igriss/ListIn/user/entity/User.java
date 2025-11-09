@@ -78,6 +78,8 @@ public class User implements UserDetails { // Agar UserDetails dan implement qil
 
     private String profileImagePath;
 
+    private String backgroundImagePath;
+
     @Builder.Default
     private Float rating = 5.0F;
 

@@ -8,8 +8,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, UUID> {
-    Optional<ChatRoom> findByPublication_IdAndSender_UserIdAndRecipient_UserId(UUID publicationId, UUID senderId, UUID receiverId);
+    Optional<ChatRoom> findBySender_UserIdAndRecipient_UserId(UUID senderId, UUID recipientId);
+
     List<ChatRoom> findBySender_UserId(UUID senderUserId);
 
-    Optional<ChatRoom> findByChatRoomId(String chatRoomId);
 }

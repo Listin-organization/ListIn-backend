@@ -77,6 +77,7 @@ services:
     ports:
       - "80:80"
     environment:
+      - chunker-service_url=http://chunker:8088/api/v1/files/chunker
       - SMTP_USERNAME=${SMTP_USERNAME}
       - SMTP_PASSWORD=${SMTP_PASSWORD}
       - OAUTH2_GOOGLE_CLIENT_ID=${OAUTH2_GOOGLE_CLIENT_ID}
@@ -98,6 +99,14 @@ services:
       - app-network
     volumes:
       - "./.env:/.env"
+
+
+  chunker:
+    image: abdulaxad/chunker:latest
+    ports:
+      - '8088:8088'
+    networks:
+      - app-network
 
 volumes:
   postgres_data:

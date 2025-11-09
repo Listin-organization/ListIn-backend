@@ -3,6 +3,7 @@ package com.igriss.ListIn.publication.mapper;
 
 import com.igriss.ListIn.location.dto.LocationDTO;
 import com.igriss.ListIn.location.mapper.LocationMapper;
+import com.igriss.ListIn.publication.dto.ProductVariantResponseDTO;
 import com.igriss.ListIn.publication.dto.PublicationRequestDTO;
 import com.igriss.ListIn.publication.dto.PublicationResponseDTO;
 import com.igriss.ListIn.publication.entity.NumericValue;
@@ -54,6 +55,8 @@ public class PublicationMapper {
                 .productCondition(productCondition)
                 .likes(0L)
                 .views(0L)
+                .aspectRation((requestDTO.getAspectRation() == null) ? 1.0 : requestDTO.getAspectRation())
+                .videoPreview(requestDTO.getVideoPreview())
                 .publicationType(publicationType)
                 .publicationStatus(publicationStatus)
                 .seller(connectedUser)
@@ -64,10 +67,11 @@ public class PublicationMapper {
                 .county(location.getCounty())
                 .longitude(requestDTO.getLongitude())
                 .latitude(requestDTO.getLatitude())
+                .commentsCount(0)
                 .build();
     }
 
-    public PublicationResponseDTO toPublicationResponseDTO(Publication publication, List<PublicationImage> publicationImages, String publicationVideo, List<NumericValue> numericValues, Boolean liked, Boolean following) {
+    public PublicationResponseDTO toPublicationResponseDTO(Publication publication, List<PublicationImage> publicationImages, String publicationVideo, List<NumericValue> numericValues, Boolean liked, Boolean following, List<ProductVariantResponseDTO> productVariants) {
         return PublicationResponseDTO.builder()
                 .id(publication.getId())
                 .title(publication.getTitle())
@@ -75,6 +79,8 @@ public class PublicationMapper {
                 .price(publication.getPrice() != null ? publication.getPrice() : 0F)
                 .bargain(publication.getBargain())
                 .isLiked(liked)
+                .aspectRation(publication.getAspectRation())
+                .videoPreview(publication.getVideoPreview())
                 .sellerType(publication.getSeller().getRole().name())
                 .isFree(publication.getPrice() == null || publication.getPrice() == 0F)
                 .productImages(publicationImageMapper.toImageDTOList(publicationImages))
@@ -94,6 +100,8 @@ public class PublicationMapper {
                 .longitude(publication.getLongitude())
                 .latitude(publication.getLatitude())
                 .attributeValue(publicationAttributeValueMapper.toPublicationAttributeValueDTO(publication, numericValues))
+                .totalComments(publication.getCommentsCount())
+                .productVariants(productVariants)
                 .build();
     }
 }

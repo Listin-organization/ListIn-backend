@@ -4,10 +4,8 @@ import com.igriss.ListIn.publication.dto.PublicationRequestDTO;
 import com.igriss.ListIn.publication.dto.PublicationResponseDTO;
 import com.igriss.ListIn.publication.dto.UpdatePublicationRequestDTO;
 import com.igriss.ListIn.publication.dto.page.PageResponse;
-import com.igriss.ListIn.publication.entity.Publication;
 import com.igriss.ListIn.publication.entity.PublicationAttributeValue;
 import com.igriss.ListIn.publication.repository.PublicationAttributeValueRepository;
-import com.igriss.ListIn.publication.repository.PublicationRepository;
 import com.igriss.ListIn.publication.service.PublicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +13,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +33,6 @@ import java.util.UUID;
 public class PublicationController {
 
     private final PublicationService publicationService;
-    private final PublicationRepository publicationRepository;
 
     private final PublicationAttributeValueRepository repo;
 
@@ -47,9 +51,9 @@ public class PublicationController {
     }
 
     @Operation(summary = "${publication-controller.get-by-id.summary}", description = "${publication-controller.get-by-id.description}")
-    @GetMapping("/{publicationId}") // todo -> to be modified, this is for test used only !
-    public ResponseEntity<Publication> getPublicationById(@PathVariable UUID publicationId) {
-        return ResponseEntity.ok(publicationRepository.findById(publicationId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
+    @GetMapping("/{publicationId}")
+    public ResponseEntity<PublicationResponseDTO> getPublicationById(@PathVariable UUID publicationId, Authentication connectedUser) {
+        return ResponseEntity.ok(publicationService.getById(publicationId, connectedUser));
     }
 
     @GetMapping("/PAV/{publicationId}") // todo -> to be modified, this is for test used only !
@@ -108,5 +112,29 @@ public class PublicationController {
     @PostMapping("/view/{publicationId}")
     public ResponseEntity<UUID> viewPublication(@PathVariable UUID publicationId, Authentication connectedUser) {
         return ResponseEntity.ok(publicationService.viewPublication(publicationId, connectedUser));
+    }
+
+    @GetMapping("/following")
+    public ResponseEntity<PageResponse<PublicationResponseDTO>> getFollowingsPublications(@RequestParam(name = "page", defaultValue = "0", required = false) int page,
+                                                                                          @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+                                                                                          Authentication connectedUser) {
+        return ResponseEntity.ok(publicationService.getFollowingsPublications(page, size, connectedUser));
+    }
+
+    @GetMapping("/with-videos")
+    public ResponseEntity<PageResponse<PublicationResponseDTO>> getUserPostsContainingVideos(@RequestParam(name = "page", defaultValue = "0", required = false) int page,
+                                                                                             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+                                                                                             @RequestParam(name = "userId", required = false) String userId,
+                                                                                             Authentication connectedUser) {
+        return ResponseEntity.ok(publicationService.getVideoPublications(page, size, userId, connectedUser));
+    }
+
+    @GetMapping("/without-videos")
+    public ResponseEntity<PageResponse<PublicationResponseDTO>> getUserPostsContainingPhotos(@RequestParam(name = "page", defaultValue = "0", required = false) int page,
+                                                                                             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+                                                                                             @RequestParam(name = "userId", required = false) String userId,
+                                                                                             Authentication connectedUser
+    ) {
+        return ResponseEntity.ok(publicationService.getPhotoPublications(page, size, userId, connectedUser));
     }
 }

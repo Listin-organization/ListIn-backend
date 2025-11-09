@@ -1,0 +1,15 @@
+--Uzbekistan states
+INSERT INTO states (state_id, country_id, value, value_ru, value_uz) VALUES ('64cd814e-6069-497a-9da4-2dc3a9f5583b','15854ca1-064b-47cf-8491-11400c21f187','Andijan Region','Андижанская область','Andijon viloyati');
+INSERT INTO states (state_id, country_id, value, value_ru, value_uz) VALUES ('5cc1a5e7-ed1d-43e8-8f2e-f2f39c525ebe','15854ca1-064b-47cf-8491-11400c21f187','Bukhara Region','Бухарская область','Buxoro viloyati');
+INSERT INTO states (state_id, country_id, value, value_ru, value_uz) VALUES ('202491e2-e514-48ba-b27e-862541018856','15854ca1-064b-47cf-8491-11400c21f187','Fergana Region','Ферганская область','Fargʻona viloyati');
+INSERT INTO states (state_id, country_id, value, value_ru, value_uz) VALUES ('aaf54886-3339-433e-a029-100d80eb00e8','15854ca1-064b-47cf-8491-11400c21f187','Jizzakh Region','Джизакская область','Jizzax viloyati');
+INSERT INTO states (state_id, country_id, value, value_ru, value_uz) VALUES ('e60e6c32-c02f-420f-b765-4c6aef8d90b4','15854ca1-064b-47cf-8491-11400c21f187','Republic of Karakalpakstan','Республика Каракалпакстан','Qoraqalpogʻiston Respublikasi');
+INSERT INTO states (state_id, country_id, value, value_ru, value_uz) VALUES ('4fe313b2-38c1-4085-a122-72fb7a0cd07a','15854ca1-064b-47cf-8491-11400c21f187','Namangan Region','Наманганская область','Namangan viloyati');
+INSERT INTO states (state_id, country_id, value, value_ru, value_uz) VALUES ('a6b204d9-fae8-41a3-9663-a9b137246eca','15854ca1-064b-47cf-8491-11400c21f187','Navoiy Region','Навоийская область','Navoiy viloyati');
+INSERT INTO states (state_id, country_id, value, value_ru, value_uz) VALUES ('4bfd2fc1-594a-4ef7-9889-adf539321acf','15854ca1-064b-47cf-8491-11400c21f187','Kashkadarya Region','Кашкадарьинская область','Qashqadaryo viloyati');
+INSERT INTO states (state_id, country_id, value, value_ru, value_uz) VALUES ('4595730a-e6d6-4780-8de3-4e75479f27a3','15854ca1-064b-47cf-8491-11400c21f187','Samarkand Region','Самаркандская область','Samarqand viloyati');
+INSERT INTO states (state_id, country_id, value, value_ru, value_uz) VALUES ('78b69c3e-1992-49af-9890-fa42957b9afe','15854ca1-064b-47cf-8491-11400c21f187','Syrdarya Region','Сырдарьинская область','Sirdaryo viloyati');
+INSERT INTO states (state_id, country_id, value, value_ru, value_uz) VALUES ('78aabdd3-c389-446c-a9df-03b05216dd74','15854ca1-064b-47cf-8491-11400c21f187','Surxondaryo Region','Сурхандарьинская область','Surxondaryo viloyati');
+INSERT INTO states (state_id, country_id, value, value_ru, value_uz) VALUES ('3d0c94e5-ab1f-43ba-9fa3-3eda573a8f13','15854ca1-064b-47cf-8491-11400c21f187','Khorezm Region','Хорезмская область','Xorazm viloyati');
+INSERT INTO states (state_id, country_id, value, value_ru, value_uz) VALUES ('accb4160-0d78-4fcd-b242-b6caec2db3be','15854ca1-064b-47cf-8491-11400c21f187', 'Tashkent Region', 'Ташкентская область', 'Toshkent viloyati');
+INSERT INTO states (state_id, country_id, value, value_ru, value_uz) VALUES ('1ce4b796-74c9-45ac-ae6e-206cdd69e97c','15854ca1-064b-47cf-8491-11400c21f187', 'Tashkent', 'Ташкент', 'Toshkent');

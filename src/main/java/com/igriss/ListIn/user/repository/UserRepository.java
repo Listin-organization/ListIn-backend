@@ -1,8 +1,13 @@
 package com.igriss.ListIn.user.repository;
 
+import com.igriss.ListIn.publication.dto.page.PageResponse;
+import com.igriss.ListIn.user.dto.FollowsDTO;
+import com.igriss.ListIn.user.dto.UserResponseDTO;
 import com.igriss.ListIn.user.entity.User;
 import com.igriss.ListIn.user.enums.Status;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -62,9 +67,13 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Modifying
     @Query(value = """
         UPDATE users
-        SET  profile_image_path = CASE
+        SET profile_image_path = CASE
                 WHEN CAST(:profileImagePath AS varchar) IS NOT NULL THEN CAST(:profileImagePath AS varchar)
                 ELSE profile_image_path
+            END,
+            background_image_path = CASE
+                WHEN CAST(:backgroundImagePath AS varchar) IS NOT NULL THEN CAST(:backgroundImagePath AS varchar)
+                ELSE background_image_path
             END,
             nick_name = CASE
                 WHEN CAST(:nickName AS varchar) IS NOT NULL THEN CAST(:nickName AS varchar)
@@ -120,6 +129,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             @Param("userId") UUID userId,
             @Param("nickName") String nickName,
             @Param("profileImagePath") String profileImagePath,
+            @Param("backgroundImagePath") String backgroundImagePath,
             @Param("phoneNumber") String phoneNumber,
             @Param("isGrantedForPreciseLocation") Boolean isGrantedForPreciseLocation,
             @Param("locationName") String locationName,
@@ -155,5 +165,23 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Integer decrementFollowingColumn(UUID userId);
 
     boolean existsByEmail(String email);
+
+    @Query("""
+    SELECT u.userId AS userId,
+           u.nickName AS nickName,
+           u.profileImagePath AS profileImagePath,
+           u.following AS following,
+           u.followers AS followers
+    FROM User u
+    WHERE u.userId <> :currentUserId
+      AND u.userId NOT IN (
+          SELECT f.id.followingId FROM UserFollower f
+          WHERE f.id.followerId = :currentUserId
+      )
+    ORDER BY u.followers DESC
+""")
+    Page<FollowsDTO> findRecommendedUsers(@Param("currentUserId") UUID currentUserId, Pageable pageable);
+
+
 }
 

@@ -1,6 +1,8 @@
 package com.igriss.ListIn.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.io.Serializable;
@@ -14,8 +16,11 @@ public class UserRequestDTO implements Serializable {
 
     private String profileImagePath;
 
+    private String backgroundImagePath;
+
     private String nickName;
 
+    @Pattern(regexp = "^\\+998(\\s?\\d){9}$", message = "Phone Number must be in the format +998 00 123 45 67")
     private String phoneNumber;
 
     private Boolean isGrantedForPreciseLocation;

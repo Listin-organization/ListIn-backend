@@ -31,5 +31,13 @@ public interface PublicationService {
 
     UUID viewPublication(UUID publicationId, Authentication connectedUser);
 
-    Publication getById(UUID publicationId);
+    PublicationResponseDTO getById(UUID publicationId, Authentication connectedUser);
+    Publication getByIdAsEntity(UUID publicationId);
+
+
+    PageResponse<PublicationResponseDTO> getFollowingsPublications(int page, int size, Authentication connectedUser);
+
+    PageResponse<PublicationResponseDTO> getVideoPublications(int page, int size,String userId,  Authentication connectedUser);
+
+    PageResponse<PublicationResponseDTO> getPhotoPublications(int page, int size, String userId, Authentication authentication);
 }

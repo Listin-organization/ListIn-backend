@@ -15,7 +15,7 @@ import com.igriss.ListIn.publication.service.PublicationLikeService;
 import com.igriss.ListIn.publication.service.PublicationViewService;
 import com.igriss.ListIn.search.document.PublicationDocument;
 import com.igriss.ListIn.search.dto.FoundPublicationsDTO;
-import com.igriss.ListIn.search.repository.SearchParamMapper;
+import com.igriss.ListIn.search.mapper.SearchParamMapper;
 import com.igriss.ListIn.search.service.supplier.QueryRepository;
 import com.igriss.ListIn.search.service.supplier.SearchParams;
 import com.igriss.ListIn.user.entity.User;
@@ -187,7 +187,6 @@ public class PublicationSearchServiceImpl implements PublicationSearchService {
     }
 
 
-
     @Override
     public List<String> getLastQueriedValues(Authentication connectedUser) {
         User user = (User) connectedUser.getPrincipal();
@@ -283,7 +282,9 @@ public class PublicationSearchServiceImpl implements PublicationSearchService {
                 productFileService.findVideoUrlByPublicationId(publication.getId()),
                 numericValueService.findNumericFields(publication.getId()),
                 publicationLikeService.isLiked(user.getUserId(), publication.getId()),
-                userService.isFollowingToUser(user.getUserId(), publication.getSeller().getUserId()));
+                userService.isFollowingToUser(user.getUserId(), publication.getSeller().getUserId()),
+                null
+        );
 
         publicationResponseDTO.setViews(publicationViewService.views(publication.getId()));
         publicationResponseDTO.setIsViewed(publicationViewService.isViewed(user.getUserId(), publication.getId()));
